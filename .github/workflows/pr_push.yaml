@@ -68,7 +68,7 @@ jobs:
       - run: |
           npm i browserify
       - run: |
-          npm run build
+          REACT_APP_CIRCUITS=${{secrets.CIRCUITS}} npm run build
         env:
           REACT_APP_BRANCH: ${{ github.head_ref }}
         working-directory: browser

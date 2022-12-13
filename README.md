@@ -63,6 +63,8 @@ You need to set up the following needed secrets in Github:
   github can invalidate your cloudfront cache
 - `AWS_SECRET_ACCESS_KEY` - Same thing
 - `TF_API_TOKEN` - The terraform cloud token, so the terraform process runs there
+- `CIRCUITS` - An array of circuits you want to run this MPC for (make sure their `r1cs`, `ptau` and
+  `zkey` files are in the `circuits` folder)
 
 In terraform cloud, you need the following variables in "variable sets":
 
