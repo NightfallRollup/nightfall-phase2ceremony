@@ -1,7 +1,6 @@
 #!/bin/bash
 export AWS_ACCESS_KEY_ID=${access_key_id}
 export AWS_SECRET_ACCESS_KEY=${access_key_secret}
-export AUTH_KEY=${auth_key}
 
 ## Installing nvm
 curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
@@ -20,4 +19,4 @@ nvm use
 npm i
 
 ## Starting app like a boss
-npm run start
+AUTH_KEY=${auth_key} npm run start

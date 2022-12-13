@@ -5,7 +5,7 @@ const path = require('path');
 const FormData = require('form-data');
 const chalk = require('chalk');
 
-module.exports = async function applyContrib({ circuit, name, contribData, branch }) {
+module.exports = async function applyContrib({ circuit, contribData, branch, authKey }) {
   let url;
   if (process.env.NODE_ENV === 'development') {
     url = 'http://localhost:3333';
@@ -19,6 +19,7 @@ module.exports = async function applyContrib({ circuit, name, contribData, branc
     method: 'get',
     url: `${url}/contribution/${circuit}`,
     responseType: 'arraybuffer',
+    headers: [{ 'x-app-token': authKey }],
   });
 
   const write = fs.writeFileSync(`contrib_${circuit}.zkey`, response.data, { encoding: 'binary' });
