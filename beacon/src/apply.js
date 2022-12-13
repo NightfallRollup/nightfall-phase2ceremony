@@ -15,11 +15,11 @@ module.exports = async function applyContrib({ circuit, contribData, branch, aut
     url = 'https://api-ceremony.polygon-nightfall.io';
   }
 
+  axios.defaults.headers.common['X-APP-TOKEN'] = authKey;
   const response = await axios({
     method: 'get',
     url: `${url}/contribution/${circuit}`,
     responseType: 'arraybuffer',
-    headers: [{ 'x-app-token': authKey }],
   });
 
   const write = fs.writeFileSync(`contrib_${circuit}.zkey`, response.data, { encoding: 'binary' });
