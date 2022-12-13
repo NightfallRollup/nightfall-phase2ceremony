@@ -6,7 +6,7 @@ import { ENTROPY_ARRAY_MAX_SIZE } from './constants';
 
 const entropyArr = [];
 
-const CIRCUITS = process.env.REACT_APP_CIRCUITS;
+const CIRCUITS = process.env.REACT_APP_CONFIG.split(',').map(e => e.trim());
 
 function App() {
   const [mousePos, setMousePos] = useState({});
