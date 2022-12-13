@@ -63,6 +63,8 @@ You need to set up the following needed secrets in Github:
   github can invalidate your cloudfront cache
 - `AWS_SECRET_ACCESS_KEY` - Same thing
 - `TF_API_TOKEN` - The terraform cloud token, so the terraform process runs there
+- `CIRCUITS` - A comma-separated list of circuits you want to deploy for. Remember to add the
+  `ptau`, `r1cs` and `zkey` files for each circuit you're running the ceremony for.
 
 In terraform cloud, you need the following variables in "variable sets":
 

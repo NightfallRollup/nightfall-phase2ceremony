@@ -2,9 +2,11 @@ import './App.css';
 import { ContributeCard } from './components/contributeCard';
 import Grid2 from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
-import { ENTROPY_ARRAY_MAX_SIZE, CIRCUITS } from './constants';
+import { ENTROPY_ARRAY_MAX_SIZE } from './constants';
 
 const entropyArr = [];
+
+const CIRCUITS = process.env.REACT_APP_CIRCUITS.split(',').map(e => e.trim());
 
 function App() {
   const [mousePos, setMousePos] = useState({});
