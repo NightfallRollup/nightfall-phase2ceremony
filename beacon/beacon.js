@@ -12,10 +12,12 @@ program.description('CLI').version('0.8.0');
 
 program
   .description('Beacon')
+  .argument('[authKey]', 'The authorization key for this procedure')
   .argument('[branch]', 'The branch to use in your contribution')
   .argument('[beaconHash]', 'The beacon hash to apply')
   .argument('[circuit]', 'Apply beacon to a specific circuit only')
-  .action(async (branch, beaconHash, circuit) => {
+  .action(async (authKey, branch, beaconHash, circuit) => {
+    if (!authKey) authKey = await promptly.prompt('Auth key: ');
     if (!beaconHash) beaconHash = await promptly.prompt('Beacon hash: ');
     if (!branch) branch = branchName();
 
@@ -29,6 +31,7 @@ program
         circuit,
         contribData: beaconHash,
         branch,
+        authKey,
       });
     }
     console.log(chalk.bgGreen('Thank you for your contribution!'));

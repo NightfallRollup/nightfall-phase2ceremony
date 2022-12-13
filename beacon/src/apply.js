@@ -5,7 +5,7 @@ const path = require('path');
 const FormData = require('form-data');
 const chalk = require('chalk');
 
-module.exports = async function applyContrib({ circuit, name, contribData, branch }) {
+module.exports = async function applyContrib({ circuit, contribData, branch, authKey }) {
   let url;
   if (process.env.NODE_ENV === 'development') {
     url = 'http://localhost:3333';
@@ -15,6 +15,7 @@ module.exports = async function applyContrib({ circuit, name, contribData, branc
     url = 'https://api-ceremony.polygon-nightfall.io';
   }
 
+  axios.defaults.headers.common['X-APP-TOKEN'] = authKey;
   const response = await axios({
     method: 'get',
     url: `${url}/contribution/${circuit}`,
