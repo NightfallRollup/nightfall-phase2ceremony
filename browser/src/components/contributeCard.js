@@ -39,6 +39,12 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
     setSubmitted(true);
     console.log('START: ', new Date());
 
+    // shuffling the array using Durstenfeld shuffle
+    for (let i = circuits.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [circuits[i], circuits[j]] = [circuits[j], circuits[i]];
+    }
+
     const vers = {};
     for (const circuit of circuits) {
       if (!name) name = haikunator.haikunate();
