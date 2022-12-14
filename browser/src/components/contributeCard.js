@@ -1,24 +1,9 @@
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import Haikunator from 'haikunator';
 import EntropyProgress from './entropyProgress';
 import Buttons from './cardButtons';
 import SubmissionProgress from './submissionProgress';
 import ThankYou from './thankYou';
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  display: 'flex',
-  flexDirection: 'column',
-}));
 
 export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile }) {
   let [name, setName] = React.useState();
@@ -64,27 +49,7 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
   }
 
   return (
-    <StyledCard>
-      <CardHeader title="Nightfall Phase2 Ceremony"></CardHeader>
-      <CardContent>
-        <Typography paragraph align="center" variant="body">
-          Zero-knowledge proofs require a trusted setup.
-        </Typography>
-        <Typography paragraph variant="body">
-          Since Nightfall uses the Groth16 proving scheme, a second phase of the MPC is needed, for
-          each circuit.
-        </Typography>
-        <Typography paragraph variant="body">
-          We want to invite you to contribute to this Second Phase.
-          {isMobile
-            ? 'To start, just input some random stuff. '
-            : 'To start, just move your mouse around to generate some entropy. '}
-          If you want, you can also enter your name for later verification.
-        </Typography>
-        <Typography paragraph variant="body">
-          The process takes 10-20mins. Go grab a coffee!
-        </Typography>
-      </CardContent>
+    <div>
       <EntropyProgress
         entropy={entropy}
         entropyArr={entropyArr}
@@ -110,6 +75,6 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
         circuitsSubmitted={circuitsSubmitted}
         verifications={verifications}
       />
-    </StyledCard>
+    </div>
   );
 }

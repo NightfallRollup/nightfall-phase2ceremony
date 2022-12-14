@@ -18,7 +18,11 @@ export default function SubmissionProgress({ circuits, circuitsSubmitted }) {
         return (
           <ListItem disablePadding>
             <ListItemIcon>
-              {circuitsSubmitted.includes(circuit) ? <CheckIcon /> : <CircularProgress />}
+              {circuitsSubmitted.includes(circuit) ? (
+                <CheckIcon />
+              ) : (
+                <CircularProgress color="secondary" size={24} />
+              )}
             </ListItemIcon>
             <ListItemText primary={circuit} />
           </ListItem>
