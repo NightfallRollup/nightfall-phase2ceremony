@@ -12,22 +12,31 @@ git clone -b ${git_branch} https://github.com/NightfallRollup/phase2ceremony.git
 echo "Commit hash ${commit_hash}"
 
 cd phase2ceremony
+# Installing circom dependencies
+apt-get update
+apt install build-essential
 curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
-source "$HOME/.cargo/env"
+
+# Installing circom
 git clone https://github.com/iden3/circom.git
 cd circom
-cargo build --release
-cargo install --path circom
+$HOME/.cargo/bin/cargo build --release
+$HOME/.cargo/bin/cargo install --path circom
 cd ..
 
+# Installing circomlib
+nvm install v16.17.0
+nvm use v16.17.0
+npm i
+
+# Compiling circuits
 for f in ./circuits/*.circom; do circom --r1cs $f -o ./circuits; done
+
+# Getting Hermez's phase1 .ptau files
 wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_16.ptau -O circuits/phase1.ptau
 
+# Moar dependencies...
 cd serve
-nvm install
-nvm use
-
-## Dependencies...
 npm i
 
 ## Starting app like a boss
