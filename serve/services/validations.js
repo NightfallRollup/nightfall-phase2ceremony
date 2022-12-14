@@ -37,8 +37,8 @@ export async function validateContribution({ circuit, contribData }) {
   try {
     const vl = new VerifyLog();
     await zKey.verifyFromR1cs(
-      { type: 'file', fileName: `../circuits/${circuit}/${circuit}.r1cs` },
-      { type: 'file', fileName: `../circuits/${circuit}/${circuit}.ptau` },
+      { type: 'file', fileName: `../circuits/${circuit}.r1cs` },
+      { type: 'file', fileName: `../circuits/phase1.ptau` },
       contribData,
       vl,
     );
