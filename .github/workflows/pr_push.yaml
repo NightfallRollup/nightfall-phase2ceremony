@@ -6,10 +6,7 @@ on:
   pull_request:
 
 jobs:
-  terraform-on-pr:
-    strategy:
-      matrix:
-        node-version: [16.x]
+  terraform:
     name: 'Run Terraform on pull-request'
     runs-on: ubuntu-latest
     env:
