@@ -79,9 +79,9 @@ jobs:
           region: 'eu-west-2'
           access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Copy first contribution to new branch folder
+      - name: Copy browser build
         run: |
-          s3cmd sync build/* s3://mpc-${{ github.head_ref }}/website/
+          s3cmd sync --no-mime-magic --guess-mime-type build/* s3://mpc-${{ github.head_ref }}/website/
         working-directory: browser
 
       - name: Get outputs
