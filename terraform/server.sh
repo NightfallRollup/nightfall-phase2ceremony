@@ -1,4 +1,5 @@
 #!/bin/bash
+export HOME=/home/ubuntu
 export AWS_ACCESS_KEY_ID=${access_key_id}
 export AWS_SECRET_ACCESS_KEY=${access_key_secret}
 
@@ -14,15 +15,15 @@ echo "Commit hash ${commit_hash}"
 cd phase2ceremony
 # Installing circom dependencies
 apt-get update
-apt install build-essential
-curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
+apt install build-essential cargo -y
 
 # Installing circom
 git clone https://github.com/iden3/circom.git
 cd circom
-$HOME/.cargo/bin/cargo build --release
-$HOME/.cargo/bin/cargo install --path circom
+cargo build --release
+cargo install --path circom
 cd ..
+export PATH="$PATH:/home/ubuntu/.cargo/bin"
 
 # Installing circomlib
 nvm install v16.17.0

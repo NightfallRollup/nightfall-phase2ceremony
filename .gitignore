@@ -7,6 +7,7 @@ out
 circuits/*
 !circuits/common
 !circuits/*.circom
+*.zkey
 *.pem
 .terraform*
 tmp
