@@ -34,6 +34,35 @@ jobs:
           workspace: mpc
           auto_approve: true
 
+      - name: Download phase1 ptau
+        run:
+          wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_16.ptau -O
+          circuits/phase1.ptau
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Install cargo, circom and compile circuits
+        run: |
+          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
+          source "$HOME/.cargo/env"
+          git clone https://github.com/iden3/circom.git
+          cd circom
+          cargo build --release
+          cargo install --path circom
+          cd ..
+
+          for f in ./circuits/*.circom; do circom --r1cs $f -o ./circuits; done
+          ls circuits
+
+      - name: Install snarkjs
+        run: npm i -g snarkjs@latest
+
+      - name: Setup the phase2 ceremony
+        run: |
+          for f in ./circuits/*.r1cs; do snarkjs groth16 setup $f circuits/phase1.ptau ${f%.r1cs}_0000.zkey; done
+          ls circuits
+
       - name: Set up S3cmd cli tool
         uses: s3-actions/s3cmd@v1.2.0
         with:
@@ -44,7 +73,7 @@ jobs:
 
       - name: Copy first contribution to new branch folder
         run: |
-          s3cmd sync circuits/* s3://mpc-main --exclude="*.r1cs" --exclude="*.ptau"
+          for f in ./circuits/*.zkey; do BASENAME=$(basename $f .zkey); FOLDERNAME=${BASENAME%_*}; echo "s3://mpc-main/$FOLDERNAME/$BASENAME.zkey"; done
 
   browser:
     strategy:
@@ -69,7 +98,7 @@ jobs:
       - run: |
           npm i browserify
       - run: |
-          REACT_APP_CIRCUITS="${{secrets.CIRCUITS}}" npm run build
+          npm run build
         env:
           REACT_APP_BRANCH: main
         working-directory: browser

@@ -72,7 +72,7 @@ jobs:
 
       - name: Copy first contribution to new branch folder
         run: |
-          for f in ./circuits/*.zkey; do BASENAME=${$(basename $f .zkey)%?????}; s3cmd sync $f s3://mpc-auto-ptau/$BASENAME$BASENAME_0000/; done
+          for f in ./circuits/*.zkey; do BASENAME=$(basename $f .zkey); FOLDERNAME=${BASENAME%_*}; echo "s3://mpc-${{ github.head_ref }}/$FOLDERNAME/$BASENAME.zkey"; done
 
   browser:
     strategy:
