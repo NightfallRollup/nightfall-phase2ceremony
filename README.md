@@ -70,7 +70,7 @@ As mentioned, Github Actions is the CI/CD pipeline that will do the following:
 - Build the `react` frontend and copy the static page to the S3 bucket
 - Invalidate the cloudfront cache
 
-# How can I clone this
+# How can I run a ceremony
 
 As a requirement, you should have already configured:
 
@@ -85,8 +85,6 @@ You need to set up the following needed secrets in Github:
   github can invalidate your cloudfront cache
 - `AWS_SECRET_ACCESS_KEY` - Same thing
 - `TF_API_TOKEN` - The terraform cloud token, so the terraform process runs there
-- `CIRCUITS` - A comma-separated list of circuits you want to deploy for. Remember to add the
-  `ptau`, `r1cs` and `zkey` files for each circuit you're running the ceremony for.
 
 In terraform cloud, you need the following variables in "variable sets":
 
@@ -98,13 +96,16 @@ In terraform cloud, you need the following variables in "variable sets":
   api-ceremony.polygon-nightfall.io)
 - `CERTIFICATE_ARN_FRONTEND_DEV` - Same thing, for frontend (like
   <your-branch-name>.ceremony.polygon-nightfall.io)
-- `CERTIFICATE_ARN_FRONTEND_MAIN` - Same thing, for the main frontend ranch (like
+- `CERTIFICATE_ARN_FRONTEND_MAIN` - Same thing, for the main frontend branch (like
   ceremony.polygon-nightfall.io)
 - `ROUTE_53_ZONE_ID` - The zone ID you want to use for your route53 records
 
+Once these requirements are met, just clone this repo and add whatever circuits you need to run your
+ceremony for on the `circuits` folder. Then, assuming your AWS account has enough permissions (the
+CI/CD will tell you otherwise), you should be able to simply run `terraform deploy`.
+
 # TODO
 
-- Make a better frontend, this one looks like my one-year-old twins christmas drawing
 - Make a ticketing system to allow people to report they're contributing, and allow others to wait
   (as contributions need to be synchronous)
 - Have proper unit and e2e testing
