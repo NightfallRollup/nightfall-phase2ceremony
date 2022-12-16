@@ -10,8 +10,8 @@ circuits/*
 *.zkey
 *.pem
 .terraform*
-tmp
-temp
+tmp*
+temp*
 
 bundle*
 .DS_Store
