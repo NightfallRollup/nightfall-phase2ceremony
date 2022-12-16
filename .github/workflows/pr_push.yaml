@@ -70,8 +70,6 @@ jobs:
             s3cmd sync circuits/${BASENAME}_0000.zkey s3://mpc-${{ github.head_ref }}/$FOLDERNAME/${BASENAME}_0000.zkey
           done
 
-          ls circuits
-
   browser:
     strategy:
       matrix:

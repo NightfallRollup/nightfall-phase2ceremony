@@ -39,8 +39,18 @@ jobs:
           wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_16.ptau -O
           circuits/phase1.ptau
 
+      - name: Set up S3cmd cli tool
+        uses: s3-actions/s3cmd@v1.2.0
+        with:
+          provider: aws # default is linode
+          region: 'eu-west-2'
+          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Install dependencies
-        run: npm i
+        run: |
+          npm i
+          npm i -g snarkjs@latest
 
       - name: Install cargo, circom and compile circuits
         run: |
@@ -52,28 +62,14 @@ jobs:
           cargo install --path circom
           cd ..
 
-          for f in ./circuits/*.circom; do circom --r1cs $f -o ./circuits; done
-          ls circuits
-
-      - name: Install snarkjs
-        run: npm i -g snarkjs@latest
-
-      - name: Setup the phase2 ceremony
-        run: |
-          for f in ./circuits/*.r1cs; do snarkjs groth16 setup $f circuits/phase1.ptau ${f%.r1cs}_0000.zkey; done
-          ls circuits
-
-      - name: Set up S3cmd cli tool
-        uses: s3-actions/s3cmd@v1.2.0
-        with:
-          provider: aws # default is linode
-          region: 'eu-west-2'
-          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Copy first contribution to new branch folder
-        run: |
-          for f in ./circuits/*.zkey; do BASENAME=$(basename $f .zkey); FOLDERNAME=${BASENAME%_*}; echo "s3://mpc-main/$FOLDERNAME/$BASENAME.zkey"; done
+          for f in ./circuits/*.circom
+          do 
+            circom --r1cs $f -o ./circuits
+            snarkjs groth16 setup ${f%.circom}.r1cs circuits/phase1.ptau ${f%.circom}_0000.zkey
+            BASENAME=$(basename $f .circom)
+            FOLDERNAME=${BASENAME%.*}
+            s3cmd sync circuits/${BASENAME}_0000.zkey s3://mpc-main/$FOLDERNAME/${BASENAME}_0000.zkey
+          done
 
   browser:
     strategy:
