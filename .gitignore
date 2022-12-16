@@ -4,11 +4,14 @@
 node_modules
 log
 out
+circuits/*
+!circuits/common
+!circuits/*.circom
 *.zkey
-!circuits/**/*.zkey
 *.pem
 .terraform*
-tmp
+tmp*
+temp*
 
 bundle*
 .DS_Store
