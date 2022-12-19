@@ -11,30 +11,6 @@ export default function ThankYou({ circuits, circuitsSubmitted, verifications })
         <Typography paragraph align="center" variant="h5" marginTop={'4%'}>
           Thank you for your contribution!
         </Typography>
-        {/* <Typography paragraph align="center" variant="body" marginTop={'4%'}>
-          More details about your contribution:
-        </Typography>
-        {circuits.map(circuit => {
-          return (
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>{circuit}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography style={{ whiteSpace: 'pre-line' }}>
-                  <Typography variant="h6">Contributions so far:</Typography>
-                  {verifications[circuit].split('contribution').map(p => (
-                    <p>{p}</p>
-                  ))}
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
-          );
-        })} */}
       </>
     );
   }
