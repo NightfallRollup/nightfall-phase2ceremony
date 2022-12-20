@@ -14,9 +14,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
+          cd serve
           npm i
       - name: Run unit tests
         run: |
+          cd serve
           AUTH_KEY=${{ secrets.AUTH_KEY }} npm run test
 
   terraform:
