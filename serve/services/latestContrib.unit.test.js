@@ -1,5 +1,4 @@
 import { getLatestContribution } from './latestContrib';
-import { jest } from '@jest/globals';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
@@ -24,6 +23,10 @@ beforeAll(() => {
       }),
     );
   });
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 test('Should get latest contribution', async () => {

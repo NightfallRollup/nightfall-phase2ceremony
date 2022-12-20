@@ -6,6 +6,19 @@ on:
   pull_request:
 
 jobs:
+  unit:
+    name: 'Run unit test'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          npm i
+      - name: Run unit tests
+        run: |
+          AUTH_KEY=${{ secrets.AUTH_KEY }} npm run test
+
   terraform:
     name: 'Run Terraform on pull-request'
     runs-on: ubuntu-latest

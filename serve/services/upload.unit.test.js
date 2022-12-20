@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
@@ -11,6 +10,10 @@ beforeAll(() => {
   AWS.mock('S3', 'putObject', UploadParams => {
     return new Promise(resolve => resolve('Uploaded'));
   });
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 test('Should upload latest contribution', async () => {

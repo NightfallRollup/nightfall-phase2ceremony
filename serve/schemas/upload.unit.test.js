@@ -1,6 +1,10 @@
 import { uploadBeaconSchema, uploadContribSchema } from './upload.js';
 
-describe('Validation tests', () => {
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+describe('Schema validation tests', () => {
   test('should validate an contribution upload schema', async () => {
     const valid = {
       name: 'somename',
