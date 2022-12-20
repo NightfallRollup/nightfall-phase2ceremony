@@ -1,7 +1,20 @@
+
+resource "aws_cloudfront_origin_access_control" "distribution" {
+  name                              = "mpc"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+resource "aws_cloudfront_origin_access_identity" "distribution" {
+  comment = "Some comment"
+}
+
 resource "aws_cloudfront_distribution" "distribution" {
   origin {
     domain_name              = aws_s3_bucket.server.bucket_regional_domain_name
     origin_id                = aws_s3_bucket.server.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.distribution.id
     origin_path = "/website"
   }
 
