@@ -12,6 +12,7 @@ circuits/*
 .terraform*
 tmp*
 temp*
+coverage
 
 bundle*
 .DS_Store
