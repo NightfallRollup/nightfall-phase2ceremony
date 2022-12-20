@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon index.js",
     "start": "NODE_ENV=production node index.js",
-    "test": "vitest --watch **/*.test.js --coverage",
+    "test": "vitest run **/*.test.js --coverage",
+    "test:watch": "vitest --watch **/*.test.js --coverage",
     "ec2:create": "node ./aws/ec2_instance_create.js"
   },
   "dependencies": {
