@@ -1,8 +1,8 @@
 import AWS from 'aws-sdk';
 import branchName from 'current-git-branch';
-const s3 = new AWS.S3();
 
 export async function getLatestContribution({ circuit }) {
+  const s3 = new AWS.S3();
   const bucket = process.env.NODE_ENV === 'development' ? 'mpc-main' : `mpc-${branchName()}`;
 
   const list = await s3.listObjects({ Bucket: bucket, Prefix: `${circuit}` }).promise();
