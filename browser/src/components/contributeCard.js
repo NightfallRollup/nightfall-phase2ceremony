@@ -4,6 +4,7 @@ import EntropyProgress from './entropyProgress';
 import Buttons from './cardButtons';
 import SubmissionProgress from './submissionProgress';
 import ThankYou from './thankYou';
+import { generateContrib } from '../service/apply'; 
 
 export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile }) {
   let [name, setName] = React.useState();
@@ -30,10 +31,11 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
       [circuits[i], circuits[j]] = [circuits[j], circuits[i]];
     }
 
+    if (!name) name = haikunator.haikunate();
+
     const vers = {};
     for (const circuit of circuits) {
-      if (!name) name = haikunator.haikunate();
-      const verification = await window.applyContrib({
+      const verification = await generateContrib({
         circuit,
         type: 'contribution',
         name,
