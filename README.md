@@ -104,6 +104,11 @@ Once these requirements are met, just clone this repo and add whatever circuits 
 ceremony for on the `circuits` folder. Then, assuming your AWS account has enough permissions (the
 CI/CD will tell you otherwise), you should be able to simply run `terraform deploy`.
 
+# Running
+```
+npm i -g browserify
+```
+
 # TODO
 
 - Make a ticketing system to allow people to report they're contributing, and allow others to wait

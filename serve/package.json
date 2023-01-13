@@ -29,9 +29,8 @@
     "luxon": "^3.1.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
-    "pino": "^8.7.0",
+    "pino": "^8.8.0",
     "pino-http": "^8.2.1",
-    "pino-pretty": "^9.1.1",
     "promptly": "^3.2.0",
     "snarkjs": "^0.5.0"
   },

@@ -4,7 +4,6 @@ import EntropyProgress from './entropyProgress';
 import Buttons from './cardButtons';
 import SubmissionProgress from './submissionProgress';
 import ThankYou from './thankYou';
-import { generateContrib } from '../service/apply'; 
 
 export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile }) {
   let [name, setName] = React.useState();
@@ -35,7 +34,7 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
 
     const vers = {};
     for (const circuit of circuits) {
-      const verification = await generateContrib({
+      const verification = await window.generateContrib({
         circuit,
         type: 'contribution',
         name,

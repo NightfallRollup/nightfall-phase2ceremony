@@ -3,6 +3,7 @@ import { hasFile, routeValidator, validateContribution } from '../services/valid
 import { uploadContribSchema } from '../schemas/upload.js';
 import { upload } from '../services/upload.js';
 import { getLatestContribution } from '../services/latestContrib.js';
+import logger from '../utils/logger.mjs';
 
 const router = express.Router();
 
@@ -16,23 +17,41 @@ router.get('/:circuit', async (req, res, next) => {
   }
 });
 
-router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, res) => {
+router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, res, next) => {
   try {
     const { name, circuit } = req.body;
     const { data } = req.files.contribution;
 
+    /* changes the name to be in the format `${name_YYYY-MM-DD} so that if the same "name" does many
+      contributions, the previous does not get overwritten.
+    */
+    const newName = `${name}_${new Date().toISOString().split('T')[0]}`;
+
     //send response immediately so the user can start working on the next circuit
     res.send({
       status: true,
-      message: 'Thank you for your contribution!',
       verification: res.locals,
+    });
+
+    logger.info({
+      msg: 'Verifying contribution...',
+      circuit,
+      name: newName
     });
 
     // THEN verify it before uploading. The verification logs are unused for now :(
     const vl = await validateContribution({ circuit, contribData: data });
+
+    logger.info({
+      msg: 'Contribution verified!',
+      circuit,
+      name: newName
+    });
+
     // Upload it
-    await upload({ circuit, name, data: data });
+    await upload({ circuit, name: newName, data: data });
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 });
