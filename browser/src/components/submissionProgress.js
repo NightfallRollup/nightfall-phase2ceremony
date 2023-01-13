@@ -16,7 +16,7 @@ export default function SubmissionProgress({ circuits, circuitsSubmitted }) {
     <StyledList>
       {circuits.map(circuit => {
         return (
-          <ListItem disablePadding>
+          <ListItem disablePadding key={circuit}>
             <ListItemIcon>
               {circuitsSubmitted.includes(circuit) ? (
                 <CheckIcon />
