@@ -95,6 +95,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -110,6 +111,7 @@ jobs:
         env:
           REACT_APP_BRANCH: main
         working-directory: browser
+
       - name: Set up S3cmd cli tool
         uses: s3-actions/s3cmd@v1.2.0
         with:
@@ -117,6 +119,7 @@ jobs:
           region: 'eu-west-2'
           access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Copy browser build
         run: |
           s3cmd sync --no-mime-magic --guess-mime-type build/* s3://mpc-main/website/
@@ -137,3 +140,4 @@ jobs:
           AWS_REGION: 'eu-west-3'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+ 
