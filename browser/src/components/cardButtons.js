@@ -49,7 +49,7 @@ export default function Buttons({
             className="input__text"
             type="text"
             error={!isValidEntropy}
-            label={isValidEntropy ? 'Entropy' : 'Error'}
+            label="Entropy"
             helperText={!isValidEntropy ? 'At least 20 characters' : ''}
             id="entropy"
             onChange={validateEntropy}
@@ -65,7 +65,7 @@ export default function Buttons({
           type="text"
           id="name"
           error={!isValidName}
-          label={isValidName ? 'Name (optional)' : 'Error'}
+          label="Name (optional)"
           disabled={!entropy}
           variant={!isValidName ? 'filled' : 'standard'}
           helperText={!isValidName ? 'Maximum 40 alphanumeric characters' : ''}

@@ -13,6 +13,7 @@ function App() {
   const [entropy, setEntropy] = useState(0);
   const isMobile = window.innerWidth < 1024;
 
+  // captures mouse events to generate the entropy
   useEffect(() => {
     const handleMouseMove = event => {
       setMousePos({ x: event.clientX, y: event.clientY });
@@ -22,7 +23,8 @@ function App() {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
-
+ 
+  // sets the entropy once the generation is done
   useEffect(() => {
     if (!mousePos.x || entropy || isMobile) return;
     if (!doneCapturing) {
