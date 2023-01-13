@@ -1,4 +1,5 @@
-const { zKey } = require('snarkjs');
+const snarkjs = require('./snarkjs.min.js');
+//const { zKey } = require('snarkjs');
 const axios = require('axios').default;
 const FormData = require('form-data');
 
@@ -22,7 +23,8 @@ async function generateContrib({ circuit, name, contribData, branch, NODE_ENV })
   };
 
   // generates the contribution for the circuit
-  const res = await zKey.contribute(`${url}/${circuit}`, o, name, contribData);
+  //const res = await zKey.contribute(`${url}/${circuit}`, o, name, contribData);
+  const res = await snarkjs.zKey.contribute(`${url}/${circuit}`, o, name, contribData);
   if (!res) throw Error('Invalid inputs');
 
   o.file = o.data.buffer.slice(o.data.byteOffset, o.data.byteLength + o.data.byteOffset);
@@ -42,4 +44,4 @@ async function generateContrib({ circuit, name, contribData, branch, NODE_ENV })
   return call.data.verification;
 }
 
-window.generateContrib = generateContrib;
+export { generateContrib };
