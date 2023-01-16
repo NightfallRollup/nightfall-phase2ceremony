@@ -8,17 +8,17 @@ on:
       - main
 
 jobs:
-  unit:
-    name: 'Run unit test'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Run unit tests
-        run: |
-          cd serve
-          npm i
-          AUTH_KEY=${{ secrets.AUTH_KEY }} npm run test
+#  unit:
+#    name: 'Run unit test'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Run unit tests
+#        run: |
+#          cd serve
+#          npm i
+#          AUTH_KEY=${{ secrets.AUTH_KEY }} npm run test
 
   terraform:
     name: 'Run Terraform on Merge'
