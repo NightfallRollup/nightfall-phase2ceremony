@@ -106,7 +106,7 @@ CI/CD will tell you otherwise), you should be able to simply run `terraform depl
 
 # Running
 ```
-npm i -g browserify
+$ ./bin/init.sh
 ```
 
 # TODO

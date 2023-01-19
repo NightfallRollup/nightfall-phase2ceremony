@@ -5,7 +5,7 @@ import Buttons from './cardButtons';
 import SubmissionProgress from './submissionProgress';
 import ThankYou from './thankYou';
 
-export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile }) {
+export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile, token }) {
   let [name, setName] = React.useState();
   const [submitted, setSubmitted] = React.useState(false);
   const [circuitsSubmitted, setCircuitsSubmitted] = React.useState([]);
@@ -30,6 +30,8 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
       [circuits[i], circuits[j]] = [circuits[j], circuits[i]];
     }
 
+    console.log(`Token: ${token}`);
+
     if (!name) name = haikunator.haikunate();
 
     const vers = {};
@@ -41,6 +43,7 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
         contribData: entropy,
         branch: process.env.REACT_APP_BRANCH || 'main',
         NODE_ENV: process.env.NODE_ENV,
+        token: token
       });
       vers[circuit] = verification;
       setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);

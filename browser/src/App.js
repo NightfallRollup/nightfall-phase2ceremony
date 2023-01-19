@@ -1,35 +1,56 @@
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import styles from './App.module.css';
 import { ContributeCard } from './components/contributeCard';
-import { useEffect, useState } from 'react';
 import { ENTROPY_ARRAY_MAX_SIZE } from './constants';
 
 const entropyArr = [];
 
 const CIRCUITS = process.env.REACT_APP_CIRCUITS.split(',').map(e => e.trim());
+const HOST_BACKEND = process.env.REACT_APP_HOST_BACKEND;
 
 function App() {
   const [mousePos, setMousePos] = useState({});
   const [doneCapturing, setDoneCapturing] = useState(false);
   const [entropy, setEntropy] = useState(0);
   const isMobile = window.innerWidth < 1024;
+  const [token, setToken] = useState('');
+  const [tryAgainLater, setTryAgainLater] = useState(false);
+
+  useEffect(() => {
+    axios.get(`${HOST_BACKEND}/token`).then(res => {
+      console.log(`res.data = ${res.data.token}`);
+      if(res.data.token) 
+        setToken(res.data.token);
+      else
+        setTryAgainLater(true);
+    });
+  }, []);
 
   // captures mouse events to generate the entropy
   useEffect(() => {
+    if (! token) return;
+
     const handleMouseMove = event => {
       setMousePos({ x: event.clientX, y: event.clientY });
     };
+
     window.addEventListener('mousemove', handleMouseMove);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  }, [token]);
  
   // sets the entropy once the generation is done
   useEffect(() => {
     if (!mousePos.x || entropy || isMobile) return;
+
     if (!doneCapturing) {
       entropyArr.push(Math.round(mousePos.x * mousePos.y));
+
       if (entropyArr.length >= ENTROPY_ARRAY_MAX_SIZE) setDoneCapturing(true);
+
     } else if (!entropy) {
       const stream = new TextEncoder().encode(entropyArr.reduce((acc, current) => acc + current));
       crypto.subtle.digest('SHA-256', stream).then(hash => {
@@ -59,20 +80,29 @@ function App() {
         </svg>
         Nightfall Phase2 Ceremony
       </div>
-      <p>
-        Zero-knowledge proofs require a trusted setup. Since Nightfall uses the Groth16 proving
-        scheme, a second phase of the MPC is needed, for each circuit. We want to invite you to
-        contribute to this Second Phase. To start, just move your {isMobile ? 'device' : 'cursor'}{' '}
-        to generate some entropy. If you want, you can also enter your name for later verification.
-      </p>
-      <p>The process takes 10-20mins. Go grab a coffee!</p>
-      <ContributeCard
-        setEntropy={setEntropy}
-        entropy={entropy}
-        entropyArr={entropyArr}
-        circuits={CIRCUITS}
-        isMobile={isMobile}
-      />
+      <div style={{display: token == '' ? 'none' : 'inline'}}>
+        <p>
+          Zero-knowledge proofs require a trusted setup. Since Nightfall uses the Groth16 proving
+          scheme, a second phase of the MPC is needed, for each circuit. We want to invite you to
+          contribute to this Second Phase. To start, just move your {isMobile ? 'device' : 'cursor'}{' '}
+          to generate some entropy. If you want, you can also enter your name for later verification.
+        </p>
+        <p>The process takes 10-20mins. Go grab a coffee!</p>
+        <ContributeCard
+          setEntropy={setEntropy}
+          entropy={entropy}
+          entropyArr={entropyArr}
+          circuits={CIRCUITS}
+          isMobile={isMobile}
+          token={token}
+        />
+      </div>
+      <div style={{display: tryAgainLater ? 'inline' : 'none'}}>
+        <p>
+          Sorry, at the moment someone is doing a contribution. Please, try again later.
+          Thank you!
+        </p>
+      </div>
     </div>
   );
 }

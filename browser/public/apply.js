@@ -5,8 +5,10 @@ const FormData = require('form-data');
 /**
  * Generates the contribution for a given circuit and submits it
  */
-async function generateContrib({ circuit, name, contribData, branch, NODE_ENV }) {
+async function generateContrib({ circuit, name, contribData, branch, NODE_ENV, token }) {
   let url;
+
+  // TODO replace URLs with an env var
   if (NODE_ENV === 'development') {
     url = 'http://localhost:3333/contribution';
   } else if (branch !== 'main') {
@@ -31,6 +33,7 @@ async function generateContrib({ circuit, name, contribData, branch, NODE_ENV })
   formData.append('contribution', new Blob([o.file]));
   formData.append('name', name);
   formData.append('circuit', circuit);
+  formData.append('token', token);
 
   // submits the contribution
   const call = await axios({
