@@ -68,13 +68,16 @@ const updateCircuitInToken = async (app, circuit) => {
 }
 
 /**
- * 
+ * Resets the current token as soon as possible all the contributions are sent, 
+ * giving oportunity for others to contribute too.
  */
-const invalidateCurrentToken = async (app) => {
+const resetTokenIfContributionIsDone = async (app) => {
   await tokenMutex.runExclusive(async () => {
     const token = app.get(TOKEN_ATTR_NAME);
-    
-    if(token.circuits.length == 0) { // TODO!
+
+    if(token.circuits.length == 6) { // TODO replace with the array's length of circuits constant!
+      logger.info({ msg: 'Reseting token, contribution is done!', token });
+
       app.set(TOKEN_ATTR_NAME, null);
     }
   });
@@ -84,4 +87,4 @@ const getExpiringDate = (totalHours) => {
   return new Date(new Date().getTime() + totalHours * 60 * 60 * 1000);
 }
 
-export { issueNewToken, isTokenValid, updateCircuitInToken, invalidateCurrentToken };
+export { issueNewToken, isTokenValid, updateCircuitInToken, resetTokenIfContributionIsDone };

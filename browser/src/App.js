@@ -15,17 +15,15 @@ function App() {
   const [entropy, setEntropy] = useState(0);
   const isMobile = window.innerWidth < 1024;
   const [token, setToken] = useState('');
-  const [tryAgainLater, setTryAgainLater] = useState(false);
 
-  useEffect(() => {
+  function getToken() {
     axios.get(`${HOST_BACKEND}/token`).then(res => {
-      console.log(`res.data = ${res.data.token}`);
       if(res.data.token) 
         setToken(res.data.token);
       else
-        setTryAgainLater(true);
-    });
-  }, []);
+        alert('Sorry, someone is contributing at the moment. Please, try some minutes later. Thank you!');
+    }).catch(err => console.log(err));
+  }
 
   // captures mouse events to generate the entropy
   useEffect(() => {
@@ -80,13 +78,13 @@ function App() {
         </svg>
         Nightfall Phase2 Ceremony
       </div>
-      <div style={{display: token == '' ? 'none' : 'inline'}}>
-        <p>
+      <p>
           Zero-knowledge proofs require a trusted setup. Since Nightfall uses the Groth16 proving
           scheme, a second phase of the MPC is needed, for each circuit. We want to invite you to
           contribute to this Second Phase. To start, just move your {isMobile ? 'device' : 'cursor'}{' '}
           to generate some entropy. If you want, you can also enter your name for later verification.
         </p>
+      <div style={{display: token == '' ? 'none' : 'inline'}}>
         <p>The process takes 10-20mins. Go grab a coffee!</p>
         <ContributeCard
           setEntropy={setEntropy}
@@ -97,11 +95,10 @@ function App() {
           token={token}
         />
       </div>
-      <div style={{display: tryAgainLater ? 'inline' : 'none'}}>
-        <p>
-          Sorry, at the moment someone is doing a contribution. Please, try again later.
-          Thank you!
-        </p>
+      <div className="buttons" style={{display: !token ? 'inline' : 'none'}}>
+        <button onClick={getToken}>
+          Let's do it!
+        </button>
       </div>
     </div>
   );

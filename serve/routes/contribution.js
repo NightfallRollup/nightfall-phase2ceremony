@@ -4,7 +4,7 @@ import { uploadContribSchema } from '../schemas/upload.js';
 import { upload } from '../services/upload.js';
 import { getLatestContribution } from '../services/latestContrib.js';
 import logger from '../utils/logger.js';
-import { isTokenValid, updateCircuitInToken } from '../utils/tokenContributionUtil.js';
+import { isTokenValid, updateCircuitInToken, resetTokenIfContributionIsDone } from '../utils/tokenContributionUtil.js';
 
 const router = express.Router();
 
@@ -35,7 +35,7 @@ router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, 
     /* Changes the name to be in the format `${name_YYYY-MM-DD} so that if the same "name" does many
      * contributions, the previous does not get overwritten.
      */
-    const newName = `${name}_${new Date().toISOString().split('T')}`;
+    const newName = `${name}_${new Date().toISOString()}`;
 
     //send response immediately so the user can start working on the next circuit
     res.send({
@@ -62,6 +62,8 @@ router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, 
     await upload({ circuit, name: newName, data: data });
 
     updateCircuitInToken(req.app, circuit);
+
+    resetTokenIfContributionIsDone(req.app);
   } catch (err) {
     logger.error(err);
     next(err);

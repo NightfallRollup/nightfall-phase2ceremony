@@ -30,8 +30,6 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
       [circuits[i], circuits[j]] = [circuits[j], circuits[i]];
     }
 
-    console.log(`Token: ${token}`);
-
     if (!name) name = haikunator.haikunate();
 
     const vers = {};
@@ -41,8 +39,8 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
         type: 'contribution',
         name,
         contribData: entropy,
-        branch: process.env.REACT_APP_BRANCH || 'main',
-        NODE_ENV: process.env.NODE_ENV,
+        branch: process.env.REACT_APP_BRANCH || 'main', // TODO remove
+        NODE_ENV: process.env.NODE_ENV, // TODO remove
         token: token
       });
       vers[circuit] = verification;

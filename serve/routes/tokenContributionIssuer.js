@@ -10,16 +10,14 @@ router.get('/', async (req, res) => {
   if(! newToken) {
     logger.warn('A user is trying to start a contribution while there is one in progress!');
 
-    res.sendStatus(200);
-    return;
+    res.json({});
+  } else {
+    logger.info({ msg: 'New contribution token generated', newToken });
+
+    res.json({
+      token: newToken.token
+    });
   }
-
-  logger.info({ msg: 'New contribution token generated', newToken });
-
-  res.json({
-    token: newToken.token
-  });
 });
-
 
 export default router;
