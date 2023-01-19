@@ -5,17 +5,8 @@ const FormData = require('form-data');
 /**
  * Generates the contribution for a given circuit and submits it
  */
-async function generateContrib({ circuit, name, contribData, branch, NODE_ENV, token }) {
-  let url;
-
-  // TODO replace URLs with an env var
-  if (NODE_ENV === 'development') {
-    url = 'http://localhost:3333/contribution';
-  } else if (branch !== 'main') {
-    url = `https://api-${branch}.ceremony.polygon-nightfall.io/contribution`;
-  } else {
-    url = 'https://api-ceremony.polygon-nightfall.io/contribution';
-  }
+async function generateContrib({ circuit, name, contribData, token, backendServer }) {
+  const url = `${backendServer}/contribution`;
 
   const o = {
     type: 'mem',

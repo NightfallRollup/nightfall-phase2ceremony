@@ -5,7 +5,7 @@ import Buttons from './cardButtons';
 import SubmissionProgress from './submissionProgress';
 import ThankYou from './thankYou';
 
-export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile, token }) {
+export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile, token, backendServer }) {
   let [name, setName] = React.useState();
   const [submitted, setSubmitted] = React.useState(false);
   const [circuitsSubmitted, setCircuitsSubmitted] = React.useState([]);
@@ -39,13 +39,15 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
         type: 'contribution',
         name,
         contribData: entropy,
-        branch: process.env.REACT_APP_BRANCH || 'main', // TODO remove
-        NODE_ENV: process.env.NODE_ENV, // TODO remove
-        token: token
+        token: token,
+        backendServer: backendServer
       });
+
       vers[circuit] = verification;
+
       setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
     }
+
     setVerifications(vers);
     console.log('END: ', new Date());
   }

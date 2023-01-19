@@ -85,7 +85,7 @@ function App() {
           to generate some entropy. If you want, you can also enter your name for later verification.
         </p>
       <div style={{display: token == '' ? 'none' : 'inline'}}>
-        <p>The process takes 10-20mins. Go grab a coffee!</p>
+        <p>The process might takes 10-20mins. Go grab a coffee!</p>
         <ContributeCard
           setEntropy={setEntropy}
           entropy={entropy}
@@ -93,6 +93,7 @@ function App() {
           circuits={CIRCUITS}
           isMobile={isMobile}
           token={token}
+          backendServer={HOST_BACKEND}
         />
       </div>
       <div className="buttons" style={{display: !token ? 'inline' : 'none'}}>
