@@ -1,5 +1,6 @@
 import { createValidator } from 'express-joi-validation';
 import { zKey } from 'snarkjs';
+import logger from '../utils/logger.js';
 
 export const routeValidator = createValidator();
 export async function beaconAuth(req, res, next) {
@@ -19,9 +20,10 @@ export async function hasFile(req, res, next) {
 }
 
 export async function validateContribution({ circuit, contribData }) {
-  await zKey.verifyFromR1cs(
+  return await zKey.verifyFromR1cs(
     { type: 'file', fileName: `../circuits/${circuit}.r1cs` },
     { type: 'file', fileName: `../circuits/phase1.ptau` },
     contribData,
+    logger
   );
 }

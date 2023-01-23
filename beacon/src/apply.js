@@ -5,24 +5,14 @@ const path = require('path');
 const FormData = require('form-data');
 const chalk = require('chalk');
 
-module.exports = async function applyContrib({ circuit, contribData, branch, authKey }) {
-  let url;
-  if (process.env.NODE_ENV === 'development') {
-    url = 'http://localhost:3333';
-  } else if (branch !== 'main') {
-    url = `https://api-${branch}.ceremony.polygon-nightfall.io`;
-  } else {
-    url = 'https://api-ceremony.polygon-nightfall.io';
-  }
-
-  axios.defaults.headers.common['X-APP-TOKEN'] = authKey;
+module.exports = async function applyContrib({ circuit, contribData, token, backendHost }) {
   const response = await axios({
     method: 'get',
-    url: `${url}/contribution/${circuit}`,
+    url: `${backendHost}/contribution/${circuit}`,
     responseType: 'arraybuffer',
   });
 
-  const write = fs.writeFileSync(`contrib_${circuit}.zkey`, response.data, { encoding: 'binary' });
+  fs.writeFileSync(`contrib_${circuit}.zkey`, response.data, { encoding: 'binary' });
 
   const res = await zKey.beacon(
     `contrib_${circuit}.zkey`,
@@ -37,15 +27,19 @@ module.exports = async function applyContrib({ circuit, contribData, branch, aut
 
   const formData = new FormData();
   const dataPath = path.join(__dirname, `../beacon_${circuit}.zkey`);
+
   formData.append('contribution', fs.createReadStream(dataPath));
   formData.append('circuit', circuit);
+  formData.append('token', token);
 
   const call = await axios({
     method: 'POST',
-    url: `${url}/beacon`,
+    url: `${backendHost}/beacon`,
     data: formData,
     headers: { 'x-app-token': process.env.AUTH_KEY },
   });
+
   console.log(chalk.green(`Applied beacon to circuit ${circuit}`));
+
   return call.data.verification;
 };

@@ -4,37 +4,49 @@ const { Command } = require('commander');
 const program = new Command();
 const promptly = require('promptly');
 const applyContrib = require('./src/apply');
-const branchName = require('current-git-branch');
 const chalk = require('chalk');
-let circuits = ['deposit', 'burn', 'tokenise', 'transfer', 'withdraw'];
+const axios = require('axios');
+let circuits = ['deposit', 'burn', 'tokenise', 'transfer', 'withdraw', 'depositfee'];
+
+const BACKEND_HOST = process.env.BACKEND_HOST || 'https://api-ceremony.polygon-nightfall.io';
 
 program.description('CLI').version('0.8.0');
 
 program
   .description('Beacon')
-  .argument('[authKey]', 'The authorization key for this procedure')
-  .argument('[branch]', 'The branch to use in your contribution')
   .argument('[beaconHash]', 'The beacon hash to apply')
   .argument('[circuit]', 'Apply beacon to a specific circuit only')
-  .action(async (authKey, branch, beaconHash, circuit) => {
-    if (!authKey) authKey = await promptly.prompt('Auth key: ');
+  .action(async (beaconHash, circuit) => {
     if (!beaconHash) beaconHash = await promptly.prompt('Beacon hash: ');
-    if (!branch) branch = branchName();
 
     if (circuit && circuits.find(el => el === circuit)) circuits = [circuit];
-    console.log('Using branch: ', branch);
+
     console.log('Applying hash', beaconHash);
     console.log('Contributing to circuits:', circuits);
+
+    const res = await axios({
+      method: 'GET',
+      url: `${BACKEND_HOST}/token`,
+    });
+
+    if (! res.data.token) {
+      console.error(`Sorry, it is not possible to contribute at the moment. Please, try again later!`);
+      return;
+    }
+
+    const token = res.data.token;
 
     for (const circuit of circuits) {
       await applyContrib({
         circuit,
         contribData: beaconHash,
-        branch,
-        authKey,
+        token,
+        BACKEND_HOST,
       });
     }
+
     console.log(chalk.bgGreen('Thank you for your contribution!'));
+
     process.exit(0);
   });
 

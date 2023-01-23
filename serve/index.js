@@ -1,4 +1,3 @@
-// require('dotenv').config();
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
@@ -15,7 +14,12 @@ app.use(
     createParentPath: true,
   }),
 );
-app.use(morgan('dev'));
+
+if(process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan('short'));
+}
 
 app.use(express.json());
 app.use(bodyParser.json());

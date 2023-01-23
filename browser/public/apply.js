@@ -21,19 +21,23 @@ async function generateContrib({ circuit, name, contribData, token, backendServe
   o.file = o.data.buffer.slice(o.data.byteOffset, o.data.byteLength + o.data.byteOffset);
 
   const formData = new FormData();
+
   formData.append('contribution', new Blob([o.file]));
   formData.append('name', name);
   formData.append('circuit', circuit);
   formData.append('token', token);
 
-  // submits the contribution
-  const call = await axios({
-    method: 'POST',
-    url: `${url}`,
-    data: formData,
-  });
-
-  return call.data.verification;
+  try {
+    // submits the contribution
+    await axios({
+      method: 'POST',
+      url: `${url}`,
+      data: formData,
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 window.generateContrib = generateContrib;

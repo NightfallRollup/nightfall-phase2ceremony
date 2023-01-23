@@ -7,7 +7,7 @@ import { ENTROPY_ARRAY_MAX_SIZE } from './constants';
 const entropyArr = [];
 
 const CIRCUITS = process.env.REACT_APP_CIRCUITS.split(',').map(e => e.trim());
-const HOST_BACKEND = process.env.REACT_APP_HOST_BACKEND;
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST;
 
 function App() {
   const [mousePos, setMousePos] = useState({});
@@ -17,7 +17,7 @@ function App() {
   const [token, setToken] = useState('');
 
   function getToken() {
-    axios.get(`${HOST_BACKEND}/token`).then(res => {
+    axios.get(`${BACKEND_HOST}/token`).then(res => {
       if(res.data.token) 
         setToken(res.data.token);
       else
@@ -93,7 +93,7 @@ function App() {
           circuits={CIRCUITS}
           isMobile={isMobile}
           token={token}
-          backendServer={HOST_BACKEND}
+          backendServer={BACKEND_HOST}
         />
       </div>
       <div className="buttons" style={{display: !token ? 'inline' : 'none'}}>

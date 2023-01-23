@@ -1,6 +1,7 @@
 import { Mutex } from 'async-mutex';
 import { v4 as uuidv4 } from 'uuid';
 import logger from '../utils/logger.js';
+import { CIRCUITS  } from './constants.js';
 
 const tokenMutex = new Mutex();
 const TOKEN_ATTR_NAME = 'CONTRIBUTION_TOKEN';
@@ -17,18 +18,19 @@ const TOKEN_ATTR_NAME = 'CONTRIBUTION_TOKEN';
  *            }
  */
 const issueNewToken = async (app) => {
-  let newToken;
+  let newToken = null;
   await tokenMutex.runExclusive(async () => {
     const currentToken = app.get(TOKEN_ATTR_NAME);
 
-    if(currentToken && currentToken.expirationDate.getTime() >= new Date().getTime()) {
-      newToken = null;
+    if(currentToken && ! isTokenExpired(currentToken)) {
       return;
     }
 
     const tokenValue = uuidv4();
     const tokenData = {
       token: tokenValue,
+      startingDate: new Date(),
+      finishingDate: null,
       expirationDate: getExpiringDate(process.env.TOTAL_EXPIRING_HOUR || 1),
       circuits: []
     };
@@ -41,6 +43,10 @@ const issueNewToken = async (app) => {
   return newToken;
 }
 
+const isTokenExpired = token => {
+  return token.expirationDate.getTime() < new Date().getTime();
+}
+
 /**
  * 
  */
@@ -49,7 +55,7 @@ const isTokenValid = (token, app) => {
 
   return currentToken
           && currentToken.token === token
-          && currentToken.expirationDate.getTime() >= new Date().getTime();
+          && ! isTokenExpired(currentToken);
 }
 
 /**
@@ -58,7 +64,7 @@ const isTokenValid = (token, app) => {
 const updateCircuitInToken = async (app, circuit) => {
   await tokenMutex.runExclusive(async () => {
     const token = app.get(TOKEN_ATTR_NAME);
-    
+
     token.circuits.push(circuit);
 
     logger.info({ msg: `Token updated`, token });
@@ -75,7 +81,8 @@ const resetTokenIfContributionIsDone = async (app) => {
   await tokenMutex.runExclusive(async () => {
     const token = app.get(TOKEN_ATTR_NAME);
 
-    if(token.circuits.length == 6) { // TODO replace with the array's length of circuits constant!
+    if(token.circuits.length == CIRCUITS.length) {
+      token.finishingDate = new Date();
       logger.info({ msg: 'Reseting token, contribution is done!', token });
 
       app.set(TOKEN_ATTR_NAME, null);
@@ -83,7 +90,7 @@ const resetTokenIfContributionIsDone = async (app) => {
   });
 }
 
-const getExpiringDate = (totalHours) => {
+const getExpiringDate = totalHours => {
   return new Date(new Date().getTime() + totalHours * 60 * 60 * 1000);
 }
 

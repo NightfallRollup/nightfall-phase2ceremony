@@ -109,8 +109,5 @@ CI/CD will tell you otherwise), you should be able to simply run `terraform depl
 $ ./bin/init.sh
 ```
 
-# TODO
-
-- Make a ticketing system to allow people to report they're contributing, and allow others to wait
-  (as contributions need to be synchronous)
-- Have proper unit and e2e testing
+# S3 bucket uploads
+TODO!

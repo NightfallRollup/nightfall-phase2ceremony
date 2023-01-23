@@ -1,4 +1,4 @@
-import { MANUAL_ENTROPY_MIN_LENGTH, MAX_NAME_LENGTH } from '../constants';
+import { MANUAL_ENTROPY_MIN_LENGTH } from '../constants';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
@@ -30,8 +30,8 @@ export default function Buttons({
   function validateName(e) {
     e.preventDefault();
 
-    const regex = new RegExp(/^\w+$/);
-    if (e.target.value.length > MAX_NAME_LENGTH || !regex.test(e.target.value)) {
+    const regex = new RegExp(/^\w{5,30}$/);
+    if (!regex.test(e.target.value)) {
       setIsValidName(false);
       setName(null);
     } else {
@@ -39,6 +39,8 @@ export default function Buttons({
       setName(e.target.value);
     }
   }
+
+  function noop(e) {}
 
   return (
     <div>
@@ -68,8 +70,9 @@ export default function Buttons({
           label="Name (optional)"
           disabled={!entropy}
           variant={!isValidName ? 'filled' : 'standard'}
-          helperText={!isValidName ? 'Maximum 40 alphanumeric characters' : ''}
-          onChange={validateName}
+          helperText={!isValidName ? 'Between 5 and 30 alphanumeric characters' : ''}
+          onBlur={validateName}
+          onChange={noop}
         />
       </div>
 

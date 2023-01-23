@@ -10,8 +10,7 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
   const [submitted, setSubmitted] = React.useState(false);
   const [circuitsSubmitted, setCircuitsSubmitted] = React.useState([]);
   const [entropyOverride, setEntropyOverride] = React.useState(false);
-
-  const [verifications, setVerifications] = React.useState();
+  const [circuitsFailed, setCircuitsFailed] = React.useState([]);
 
   const haikunator = new Haikunator({
     defaults: {
@@ -32,9 +31,8 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
 
     if (!name) name = haikunator.haikunate();
 
-    const vers = {};
     for (const circuit of circuits) {
-      const verification = await window.generateContrib({
+      const status = await window.generateContrib({
         circuit,
         type: 'contribution',
         name,
@@ -43,12 +41,12 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
         backendServer: backendServer
       });
 
-      vers[circuit] = verification;
-
-      setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
+      if (status) {
+        setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
+      } else {
+        setCircuitsFailed(circuitsFailed => [...circuitsFailed, circuit]);
+      }
     }
-
-    setVerifications(vers);
     console.log('END: ', new Date());
   }
 
@@ -72,12 +70,12 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
           setName={setName}
         />
       ) : (
-        <SubmissionProgress circuits={circuits} circuitsSubmitted={circuitsSubmitted} />
+        <SubmissionProgress circuits={circuits} circuitsSubmitted={circuitsSubmitted} circuitsFailed={circuitsFailed} />
       )}
       <ThankYou
         circuits={circuits}
         circuitsSubmitted={circuitsSubmitted}
-        verifications={verifications}
+        circuitsFailed={circuitsFailed}
       />
     </div>
   );
