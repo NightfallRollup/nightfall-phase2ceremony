@@ -7,17 +7,22 @@ import logger from '../utils/logger.js';
 import { isTokenValid, updateCircuitInToken, resetTokenIfContributionIsDone } from '../utils/tokenContributionUtil.js';
 import { CIRCUITS  } from '../utils/constants.js';
 
-import fs from 'fs';
-
 const router = express.Router();
 
 router.get('/:circuit', async (req, res, next) => {
   try {
     // validate the circuit value
     const { circuit } = req.params;
+    const { token } = req.query;
 
     if (! CIRCUITS.includes(circuit)) {
       res.status(400).send('Invalid circuit!');
+      return;
+    }
+
+    if(! isTokenValid(token, req.app)) {
+      logger.warn(`Invalid token: ${token}`);
+      res.status(400).send('Sorry, your contribution session expired or the token is not valid. Please, try again later!');
       return;
     }
 
@@ -49,11 +54,6 @@ router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, 
       res.status(400).send('Sorry, your contribution session expired or the token is not valid. Please, try again later!');
       return;
     }
-
-    fs.writeFile('/home/israel/work/phase2ceremony/deposit_contrib_tmp.zkey', data, error => {
-      if(error)
-        logger.error(error);
-    });
 
     /* Changes the name to be in the format `${name_yyyy-mm-ddThh:MM:SS.mmmZ} so that if the same "name" does many
      * contributions, the previous does not get overwritten.

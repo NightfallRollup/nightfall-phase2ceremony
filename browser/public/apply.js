@@ -5,7 +5,7 @@ const FormData = require('form-data');
 /**
  * Generates the contribution for a given circuit and submits it
  */
-async function generateContrib({ circuit, name, contribData, token, backendServer }) {
+async function generateContribution({ circuit, name, contribData, token, backendServer }) {
   const url = `${backendServer}/contribution`;
 
   const o = {
@@ -15,7 +15,7 @@ async function generateContrib({ circuit, name, contribData, token, backendServe
   };
 
   // generates the contribution for the circuit
-  const res = await zKey.contribute(`${url}/${circuit}`, o, name, contribData);
+  const res = await zKey.contribute(`${url}/${circuit}?token=${token}`, o, name, contribData);
   if (!res) throw Error('Invalid inputs');
 
   o.file = o.data.buffer.slice(o.data.byteOffset, o.data.byteLength + o.data.byteOffset);
@@ -40,4 +40,4 @@ async function generateContrib({ circuit, name, contribData, token, backendServe
   }
 }
 
-window.generateContrib = generateContrib;
+window.generateContrib = generateContribution;

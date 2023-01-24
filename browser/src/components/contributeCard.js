@@ -32,18 +32,22 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
     if (!name) name = haikunator.haikunate();
 
     for (const circuit of circuits) {
-      const status = await window.generateContrib({
-        circuit,
-        type: 'contribution',
-        name,
-        contribData: entropy,
-        token: token,
-        backendServer: backendServer
-      });
+      try {
+        const status = await window.generateContrib({
+          circuit,
+          type: 'contribution',
+          name,
+          contribData: entropy,
+          token: token,
+          backendServer: backendServer
+        });
 
-      if (status) {
-        setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
-      } else {
+        if (status) {
+          setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
+        } else {
+          setCircuitsFailed(circuitsFailed => [...circuitsFailed, circuit]);
+        }
+      } catch (err) {
         setCircuitsFailed(circuitsFailed => [...circuitsFailed, circuit]);
       }
     }

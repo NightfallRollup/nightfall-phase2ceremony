@@ -8,7 +8,7 @@ export async function getLatestContribution({ circuit }) {
 
   const list = await s3.listObjects({ Bucket: bucket, Prefix: `${circuit}` }).promise();
 
-  const bucketData = list.Contents.filter(cont => cont.Key !== `${circuit}/`).sort(
+  const bucketData = list.Contents.filter(cont => cont.Key.match(`^${circuit}/.*\.zkey$`)).sort(
     (a, b) => new Date(b.LastModified) - new Date(a.LastModified),
   );
 
@@ -16,6 +16,8 @@ export async function getLatestContribution({ circuit }) {
     logger.warn({ msg: 'No lastest contribution found for circuit', circuit });
     return null;
   }
+
+  logger.info({ msg: 'Latest contribution found', circuit, contribution: bucketData[0].Key});
 
   const object = await s3.getObject({ Bucket: bucket, Key: `${bucketData[0].Key}` }).promise();
 

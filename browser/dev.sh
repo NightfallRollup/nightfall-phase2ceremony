@@ -1,12 +1,11 @@
 #! /bin/bash
 browserify public/apply.js -p esmify -o public/bundles.js 
 
-CIRCUITS="deposit,"
+CIRCUITS=""
 
 for f in ../circuits/*.circom
 do 
-    #CIRCUITS="${CIRCUITS}$(basename $f .circom),"
-    X=2
+    CIRCUITS="${CIRCUITS}$(basename $f .circom),"
 done
 
 if [ -z "${REACT_APP_BACKEND_HOST}" ]; then
