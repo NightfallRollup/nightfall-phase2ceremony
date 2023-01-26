@@ -3,14 +3,15 @@
 const { Command } = require('commander');
 const program = new Command();
 const promptly = require('promptly');
-const applyContrib = require('./src/apply');
+const applyContribution = require('./src/apply');
 const chalk = require('chalk');
 const axios = require('axios');
-let circuits = ['deposit', 'burn', 'tokenise', 'transfer', 'withdraw', 'depositfee'];
 
-const BACKEND_HOST = process.env.BACKEND_HOST || 'https://api-ceremony.polygon-nightfall.io';
+const CIRCUITS = ['deposit', 'burn', 'tokenise', 'transfer', 'withdraw', 'depositfee', 'transform'];
 
-program.description('CLI').version('0.8.0');
+const BACKEND_HOST = process.env.BACKEND_HOST || 'https://api-ceremony.nightfall.io';
+
+program.description('CLI').version('1.0.0');
 
 program
   .description('Beacon')
@@ -19,10 +20,16 @@ program
   .action(async (beaconHash, circuit) => {
     if (!beaconHash) beaconHash = await promptly.prompt('Beacon hash: ');
 
-    if (circuit && circuits.find(el => el === circuit)) circuits = [circuit];
+    if (circuit && ! CIRCUITS.includes(circuit)) {
+      console.error(`Invalid circuit! Valid ones are: `, CIRCUITS);
+      process.exit(1);
+    }
 
-    console.log('Applying hash', beaconHash);
-    console.log('Contributing to circuits:', circuits);
+    const circuits = circuit ? [circuit] : CIRCUITS;
+
+    console.log('Backend host: ', BACKEND_HOST);
+    console.log('Applying hash: ', beaconHash);
+    console.log('Contributing to circuits: ', circuits);
 
     const res = await axios({
       method: 'GET',
@@ -37,15 +44,17 @@ program
     const token = res.data.token;
 
     for (const circuit of circuits) {
-      await applyContrib({
+      console.log('Generating contribution for circuit: ', circuit);
+
+      await applyContribution({
         circuit,
         contribData: beaconHash,
         token,
-        BACKEND_HOST,
+        backendHost: BACKEND_HOST,
       });
     }
 
-    console.log(chalk.bgGreen('Thank you for your contribution!'));
+    console.log(chalk.bgGreen('\nThank you for your contribution!\n'));
 
     process.exit(0);
   });

@@ -5,14 +5,19 @@ const path = require('path');
 const FormData = require('form-data');
 const chalk = require('chalk');
 
-module.exports = async function applyContrib({ circuit, contribData, token, backendHost }) {
+module.exports = async function applyContribution({ circuit, contribData, token, backendHost }) {
+
+  console.log(`Downloading the lastest contribution`);
+
   const response = await axios({
     method: 'get',
-    url: `${backendHost}/contribution/${circuit}`,
+    url: `${backendHost}/contribution/${circuit}?token=${token}`,
     responseType: 'arraybuffer',
   });
 
   fs.writeFileSync(`contrib_${circuit}.zkey`, response.data, { encoding: 'binary' });
+
+  console.log(`Generating beacon contribution...`);
 
   const res = await zKey.beacon(
     `contrib_${circuit}.zkey`,
@@ -24,6 +29,8 @@ module.exports = async function applyContrib({ circuit, contribData, token, back
   );
 
   if (!res) throw Error('Invalid inputs');
+
+  console.log(`Sending beacon contribution`);
 
   const formData = new FormData();
   const dataPath = path.join(__dirname, `../beacon_${circuit}.zkey`);

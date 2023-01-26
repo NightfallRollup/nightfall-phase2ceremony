@@ -12,7 +12,7 @@ S3 bucket, otherwise send a warn messsage to the contributor.
 aws configure
 ```
 
-Add your polygon IAM access and secret keys.
+Add your IAM access and secret keys.
 
 ### Execute the script
 

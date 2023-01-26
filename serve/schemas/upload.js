@@ -8,4 +8,5 @@ export const uploadContribSchema = joi.object({
 
 export const uploadBeaconSchema = joi.object({
   circuit: joi.string().required(),
+  token: joi.string().required(),
 });

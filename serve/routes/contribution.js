@@ -1,17 +1,17 @@
 import express from 'express';
-import { hasFile, routeValidator, validateContribution } from '../services/validations.js';
+import { hasFile, routeValidator } from '../services/validations.js';
 import { uploadContribSchema } from '../schemas/upload.js';
-import { upload } from '../services/upload.js';
 import { getLatestContribution } from '../services/latestContrib.js';
+import { applyUserContribution } from '../services/contribution.js';
 import logger from '../utils/logger.js';
-import { isTokenValid, updateCircuitInToken, resetTokenIfContributionIsDone } from '../utils/tokenContributionUtil.js';
+import { isTokenValid, resetTokenIfContributionIsDone } from '../utils/tokenContributionUtil.js';
 import { CIRCUITS  } from '../utils/constants.js';
 
 const router = express.Router();
 
 router.get('/:circuit', async (req, res, next) => {
   try {
-    // validate the circuit value
+    // Validate the circuit value
     const { circuit } = req.params;
     const { token } = req.query;
 
@@ -39,53 +39,17 @@ router.get('/:circuit', async (req, res, next) => {
 
 router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, res, next) => {
   try {
-    // validate the circuit value
+    // Validate the circuit value
     const { name, circuit, token } = req.body;
     const { data } = req.files.contribution;
 
-    if (! CIRCUITS.includes(circuit)) {
-      logger.warn(`Invalid circuit: ${circuit}`);
-      res.status(400).send('Invalid circuit!');
+    try {
+      await applyUserContribution(req, token, circuit, name, data);
+    } catch (error) {
+      logger.warn(error.message);      
+      res.status(400);
       return;
     }
-
-    if(! isTokenValid(token, req.app)) {
-      logger.warn(`Invalid token: ${token}`);
-      res.status(400).send('Sorry, your contribution session expired or the token is not valid. Please, try again later!');
-      return;
-    }
-
-    /* Changes the name to be in the format `${name_yyyy-mm-ddThh:MM:SS.mmmZ} so that if the same "name" does many
-     * contributions, the previous does not get overwritten.
-     */
-    const newName = `${name}_${new Date().toISOString()}`;
-
-    logger.info({
-      msg: 'Verifying contribution...',
-      circuit,
-      name: newName
-    });
-
-    // THEN verify it before uploading
-    const isContributionValid = await validateContribution({ circuit, contribData: data });
-    if (! isContributionValid) {
-      logger.error({ msg: 'Contribution is not valid for circuit', circuit });
-      res.status(400).send(`Contribution is not valid for circuit: ${circuit}`);
-      // TODO should we invalidate the token????
-      // TODO send a msg?
-      return;
-    }
-
-    logger.info({
-      msg: 'Contribution verified!',
-      circuit,
-      name: newName
-    });
-
-    // Upload it
-    await upload({ circuit, name: newName, data: data });
-
-    updateCircuitInToken(req.app, circuit);
 
     resetTokenIfContributionIsDone(req.app);
 
