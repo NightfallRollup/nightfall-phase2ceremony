@@ -1,12 +1,12 @@
 import AWS from 'aws-sdk';
 import logger from '../utils/logger.js';
 
-export async function upload({ circuit, name, data, beacon = false }) {
+export async function upload({ circuit, name, data, fileExtension = 'zkey'}) {
   const bucketName = `mpc-main`;
-  const keyValue = `${circuit}/${beacon ? 'beacon' : name}.zkey`;
+  const keyValue = `${circuit}/${name}.${fileExtension}`;
 
   logger.info({
-    msg: 'Uploading contribution to s3 bucket',
+    msg: 'Uploading to s3 bucket',
     bucket: bucketName,
     key: keyValue
   });

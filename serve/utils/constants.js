@@ -1,1 +1,1 @@
-export const CIRCUITS = ['deposit', 'burn', 'tokenise', 'transfer', 'withdraw', 'depositfee', 'transform'];
+export const CIRCUITS = (process.env.CIRCUITS ?? '').split(',');

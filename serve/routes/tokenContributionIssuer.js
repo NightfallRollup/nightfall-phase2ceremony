@@ -5,7 +5,13 @@ import logger from '../utils/logger.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const newToken = await issueNewToken(req.app);
+  let newToken;
+  try {
+    newToken = await issueNewToken(req.app);
+  } catch (err) {
+    logger.error(err.message);
+    return res.status(503).send(err.message);
+  }
 
   if(! newToken) {
     logger.warn('A user is trying to start a contribution while there is one in progress!');

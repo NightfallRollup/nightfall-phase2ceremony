@@ -1,4 +1,6 @@
-import logger from '../utils/logger.js';
+import { zKey } from 'snarkjs';
+import AWS from 'aws-sdk';
+import logger from '../utils/logger.js'
 import {
   validateContribution,
 } from '../services/validations.js';
@@ -22,6 +24,11 @@ async function applyContribution(req, token, circuit, data, name, isBeacon) {
 
   if (! CIRCUITS.includes(circuit)) {
     throw new Error(`Invalid circuit: ${circuit}`);
+  }
+
+  const hasBeaconContribution = await isBeaconTheLatestContribution(circuit);
+  if (hasBeaconContribution) {
+    throw new Error(`A beacon contribution already exists for circuit: ${circuit}`);
   }
 
   /* 
@@ -49,7 +56,36 @@ async function applyContribution(req, token, circuit, data, name, isBeacon) {
   });
 
   // Upload it
-  await upload({ circuit, name: newName, data: data, beacon: isBeacon });
+  await upload({ circuit, name: newName, data: data });
+
+  if (isBeacon) {
+    await exportAndUploadVerificationKey(circuit, data);
+  }
 
   updateCircuitInToken(req.app, circuit);
+}
+
+async function exportAndUploadVerificationKey(circuit, finalContributionData) {
+  logger.info({ msg: 'Exporting verification key', circuit });
+
+  const verificationKey = await zKey.exportVerificationKey(finalContributionData);
+
+  await upload({ circuit, name: 'verification_key', data: JSON.stringify(verificationKey), fileExtension: 'json' });
+}
+
+export async function isBeaconTheLatestContribution(circuit) {
+  const s3 = new AWS.S3();
+  const bucket = 'mpc-main';
+  const list = await s3.listObjects({ Bucket: bucket, Prefix: `${circuit}` }).promise();
+
+  const bucketData = list.Contents.filter(cont => cont.Key.match(`^${circuit}/.*\.zkey$`)).sort(
+    (a, b) => new Date(b.LastModified) - new Date(a.LastModified),
+  );
+
+  if (! bucketData || ! bucketData[0]) {
+    logger.warn({ msg: 'No lastest contribution found for circuit', circuit });
+    return false;
+  }
+
+  return bucketData[0].Key.match(`^${circuit}/beacon.zkey$`) != null;
 }

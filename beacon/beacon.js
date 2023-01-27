@@ -44,7 +44,7 @@ program
     const token = res.data.token;
 
     for (const circuit of circuits) {
-      console.log('Generating contribution for circuit: ', circuit);
+      console.log('\n*** Generating contribution for circuit: ', circuit);
 
       await applyContribution({
         circuit,

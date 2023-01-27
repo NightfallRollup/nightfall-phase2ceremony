@@ -15,14 +15,22 @@ function App() {
   const [entropy, setEntropy] = useState(0);
   const isMobile = window.innerWidth < 1024;
   const [token, setToken] = useState('');
+  const [isButtonEnabled, enableButton] = useState(true);
 
-  function getToken() {
-    axios.get(`${BACKEND_HOST}/token`).then(res => {
+  async function getToken() {
+    try {
+      const res = await axios.get(`${BACKEND_HOST}/token`);
       if(res.data.token) 
         setToken(res.data.token);
       else
         alert('Sorry, someone is contributing at the moment. Please, try some minutes later. Thank you!');
-    }).catch(err => console.log(err));
+    } catch (err) {
+      if(err.response) {
+        enableButton(false);
+        alert(err.response.data);
+      } else
+        alert(err.message);
+    }
   }
 
   // captures mouse events to generate the entropy
@@ -97,7 +105,7 @@ function App() {
         />
       </div>
       <div className="buttons" style={{display: !token ? 'inline' : 'none'}}>
-        <button onClick={getToken}>
+        <button onClick={getToken} style={{display: isButtonEnabled ? 'inline' : 'none'}}>
           Let's do it!
         </button>
       </div>

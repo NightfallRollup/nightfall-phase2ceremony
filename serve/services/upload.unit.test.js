@@ -17,7 +17,7 @@ afterEach(() => {
 });
 
 test('Should upload latest contribution', async () => {
-  const res = await upload({ circuit: 'deposit', name: 'test', data: 'test', beacon: false });
+  const res = await upload({ circuit: 'deposit', name: 'test', data: 'test' });
   expect(res).toBe('Uploaded');
 });
 

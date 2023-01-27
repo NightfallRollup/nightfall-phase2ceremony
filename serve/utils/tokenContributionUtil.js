@@ -1,6 +1,7 @@
 import { Mutex } from 'async-mutex';
 import { v4 as uuidv4 } from 'uuid';
 import logger from '../utils/logger.js';
+import { isBeaconTheLatestContribution } from '../services/contribution.js'; 
 import { CIRCUITS  } from './constants.js';
 
 const tokenMutex = new Mutex();
@@ -14,11 +15,20 @@ const TOKEN_ATTR_NAME = 'CONTRIBUTION_TOKEN';
  *  object - an object containing info about token:
  *            { 
  *              token: string,          # the token value
+ *              startingDate: date      # the date/time the token was created
+ *              finishingDate: date     # the date/time the whole contribution process finished
  *              expirationDate: date    # the date/time the token expires
+ *              circuits: array         # array that contains the circuits with contributions already processed
  *            }
  */
 const issueNewToken = async (app) => {
   let newToken = null;
+
+  const hasBeaconContribution = await isBeaconTheLatestContribution(CIRCUITS[0]);
+  if (hasBeaconContribution) {
+    throw new Error("Sorry, Nightfall Phase2 ceremony is done!");
+  }
+
   await tokenMutex.runExclusive(async () => {
     const currentToken = app.get(TOKEN_ATTR_NAME);
 

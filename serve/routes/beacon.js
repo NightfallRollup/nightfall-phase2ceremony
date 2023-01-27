@@ -14,6 +14,8 @@ router.post('/', beaconAuth, routeValidator.body(uploadBeaconSchema), hasFile, a
   const { circuit, token } = req.body;
   const { data } = req.files.contribution;
 
+  logger.info({ msg: 'Initiating beacon contribution', circuit });
+
   try {
     await applyBeaconContribution(req, token, circuit, data);
   } catch (error) {
