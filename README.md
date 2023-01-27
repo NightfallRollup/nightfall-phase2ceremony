@@ -74,7 +74,7 @@ For running locally follow these steps:
   - This step installs some dependencies, generate files and uploads the initial zkey contribution files to the AWS S3 bucket. 
   If the zkey files were already uploaded before, just run the command. Otherwise you will have to configure your AWS credentials 
   (`$ aws configure`) before running it to guarantee they will be uploaded successfully. 
-2. Running the backend app: open a terminal, change to the `serve` directory, build the app (`npm i`) and run `AUTH_KEY=[YOUR_AUTH_KEY] npm run dev` (e.g. `$ AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 npm run dev`)
+2. Running the backend app: open a terminal, change to the `serve` directory, export the AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION=eu-west-3`. They are supposed to have read/write access to the S3 bucket where the contributions will be stored), build the app (`npm i`) and run `AUTH_KEY=[YOUR_AUTH_KEY] ./start.sh dev` (e.g. `$ AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 ./start.sh dev`)
 3. Running the frontend app: open a terminal, change to the `browser` directory, build the app (`npm i`) and run `./dev.sh`. This will make the initial 
 page of the application to open in your browser.
 4. Running the beacon app: open a terminal, change to the `beacon` directory, build the app (`npm i`) and run `BACKEND_HOST=[YOUR_BACKEND_HOST] AUTH_KEY=[THE_AUTH_KEY_USED_IN_BACKEND] npm run start` (e.g. `$ BACKEND_HOST=http://localhost:3333 AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 npm run start`). One 
