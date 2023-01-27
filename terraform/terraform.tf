@@ -1,6 +1,6 @@
 terraform {
   backend "remote" {
-    organization = "polygon-nightfall"
+    organization = "nightfall"
 
     workspaces {
       prefix = "mpc-"

@@ -34,7 +34,7 @@ resource "aws_security_group" "lb" {
 }
 
 resource "aws_lb" "lb" {
-  name               = "mpc-${var.BRANCH}-lb"
+  name               = "mpc-main-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb.id]
@@ -43,12 +43,12 @@ resource "aws_lb" "lb" {
   enable_deletion_protection = false
 
   tags = {
-    Environment = "${var.BRANCH}"
+    Environment = "main"
   }
 }
 
 resource "aws_lb_target_group" "tg" {
-  name     = "mpc-${var.BRANCH}-lb-tg"
+  name     = "mpc-main-lb-tg"
   port     = 3333
   protocol = "HTTP"
   protocol_version = "HTTP1"
@@ -75,7 +75,7 @@ resource "aws_lb_listener" "listener" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.BRANCH == "main" ? var.CERTIFICATE_ARN_BACKEND_MAIN : var.CERTIFICATE_ARN_BACKEND_DEV
+  certificate_arn   = var.CERTIFICATE_ARN_BACKEND
 
   default_action {
     type             = "forward"
@@ -86,7 +86,7 @@ resource "aws_lb_listener" "listener" {
 
 resource "aws_route53_record" "api" {
   zone_id = "Z05413741GQORWY8FTPNF"
-  name    = "%{ if var.BRANCH != "main" }api-${var.BRANCH}.ceremony.polygon-nightfall.io%{ else }api-ceremony.polygon-nightfall.io%{ endif }"
+  name    = "api-ceremony.nightfall.io"
   type    = "A"
 
   alias {

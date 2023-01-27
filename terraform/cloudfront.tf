@@ -1,6 +1,6 @@
 
 resource "aws_cloudfront_origin_access_control" "distribution" {
-  name                              = "mpc"
+  name                              = "nightfall-mpc"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   default_root_object = "index.html"
   enabled             = true
   is_ipv6_enabled     = true
-  aliases = var.BRANCH == "main" ? [ "ceremony.polygon-nightfall.io" ] : [ "${var.BRANCH}.ceremony.polygon-nightfall.io" ]
+  aliases = "ceremony.nightfall.io"
 
   default_cache_behavior {
     compress = false
@@ -35,22 +35,22 @@ resource "aws_cloudfront_distribution" "distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = var.BRANCH == "main" ? var.CERTIFICATE_ARN_FRONTEND_MAIN : var.CERTIFICATE_ARN_FRONTEND_DEV
+    acm_certificate_arn = var.CERTIFICATE_ARN_FRONTEND
     ssl_support_method = "sni-only"
   }
 
-    restrictions {
-        geo_restriction {
-            locations = []
-            restriction_type = "none"
-        }
-    }
+  restrictions {
+      geo_restriction {
+          locations = []
+          restriction_type = "none"
+      }
+  }
 }
 
 
 resource "aws_route53_record" "www" {
   zone_id = var.ROUTE_53_ZONE_ID
-  name    = "%{ if var.BRANCH != "main" }${var.BRANCH}.ceremony.polygon-nightfall.io%{ else }ceremony.polygon-nightfall.io%{ endif }"
+  name    = "ceremony.nightfall.io"
   type    = "A"
   alias {
     name                   = aws_cloudfront_distribution.distribution.domain_name

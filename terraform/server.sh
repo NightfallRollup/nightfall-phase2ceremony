@@ -4,15 +4,16 @@ export AWS_ACCESS_KEY_ID=${access_key_id}
 export AWS_SECRET_ACCESS_KEY=${access_key_secret}
 
 ## Installing nvm
-curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 ## Cloning Nightfall repo and installing the NPM version used
-git clone -b ${git_branch} https://github.com/NightfallRollup/phase2ceremony.git
-echo "Commit hash ${commit_hash}"
+git clone https://github.com/NightfallRollup/nightfall-phase2ceremony.git
 
 cd phase2ceremony
+
 # Installing circom dependencies
 apt-get update
 apt install build-essential cargo -y
@@ -41,4 +42,4 @@ cd serve
 npm i
 
 ## Starting app like a boss
-AUTH_KEY=${auth_key} npm run start
+AUTH_KEY=${auth_key} ./start.sh prod

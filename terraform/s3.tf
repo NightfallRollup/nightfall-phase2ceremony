@@ -1,7 +1,7 @@
 
 resource "aws_s3_bucket" "server" {
-  bucket = "mpc-${var.BRANCH}"
-  force_destroy = var.BRANCH == "main" ? false : true
+  bucket = "mpc-main"
+  force_destroy = false
 }
 
 data "aws_iam_policy_document" "server_policy" {
