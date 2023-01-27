@@ -62,7 +62,7 @@ Folder: `serve`. A NodeJS app that contains the logic for controlling the contri
 Folder: `browser`. A React application containing the pages and scripts.
 
 ## Beacon
-Folder: `beacon`. A command line application for generating the beacon. This is normally done after the contributions are finished.
+Folder: `beacon`. A command line application for generating the beacon & verification keys for the circuits. This should done after the user contributions are finished.
 
 ## Infrastructure/Deployment
 Folder: `terraform`. Contains the resources written in Terraform for allowing provisioning the infrastructure/application on AWS.
@@ -77,9 +77,9 @@ For running locally follow these steps:
 2. Running the backend app: open a terminal, change to the `serve` directory, export the AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION=eu-west-3`. They are supposed to have read/write access to the S3 bucket where the contributions will be stored), build the app (`npm i`) and run `AUTH_KEY=[YOUR_AUTH_KEY] ./start.sh dev` (e.g. `$ AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 ./start.sh dev`)
 3. Running the frontend app: open a terminal, change to the `browser` directory, build the app (`npm i`) and run `./dev.sh`. This will make the initial 
 page of the application to open in your browser.
-4. Running the beacon app: open a terminal, change to the `beacon` directory, build the app (`npm i`) and run `BACKEND_HOST=[YOUR_BACKEND_HOST] AUTH_KEY=[THE_AUTH_KEY_USED_IN_BACKEND] npm run start` (e.g. `$ BACKEND_HOST=http://localhost:3333 AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 npm run start`). One 
+4. Running the beacon app: open a terminal, change to the `beacon` directory, build the app (`npm i`) and run `BACKEND_HOST=[YOUR_BACKEND_HOST] AUTH_KEY=[THE_AUTH_KEY_USED_IN_BACKEND] ./start.sh` (e.g. `$ BACKEND_HOST=http://localhost:3333 AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 ./start.sh`). One 
 can pass via command line the circuit desired for applying the beacon - if nothing is passed, the beacon will be applied for all the circuits in place. The beacon 
-hash is required, it must be an hexadecimal string and will be asked during the processing if not passed via command-line (e.g. `npm run start [beacon_hash] [circuit]`).
+hash is required, it must be an hexadecimal string and will be asked during the processing.
 
 ## Architecture
 
@@ -109,7 +109,6 @@ You need to set up the following needed secrets in Github:
 - `AWS_ACCESS_KEY_ID` - You need to provide an AWS access key for your own AWS environment, so
   github can invalidate your cloudfront cache
 - `AWS_SECRET_ACCESS_KEY` - Same thing
-- `TF_API_TOKEN` - The terraform cloud token, so the terraform process runs there
 
 In terraform cloud, you need the following variables in "variable sets":
 

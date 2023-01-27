@@ -7,7 +7,7 @@ const applyContribution = require('./src/apply');
 const chalk = require('chalk');
 const axios = require('axios');
 
-const CIRCUITS = ['deposit', 'burn', 'tokenise', 'transfer', 'withdraw', 'depositfee', 'transform'];
+const CIRCUITS = process.env.CIRCUITS.split(',');
 
 const BACKEND_HOST = process.env.BACKEND_HOST || 'https://api-ceremony.nightfall.io';
 
