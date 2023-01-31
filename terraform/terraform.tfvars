@@ -7,6 +7,9 @@ AUTH_KEY = "1068160e-7951-4c73-b247-15f00c62f259"
 # No need to change, unless the backend app address has changed
 BACKEND_HOST = "https://api-ceremony.nightfall.io"
 
+CERTIFICATE_ARN_BACKEND = ""
+CERTIFICATE_ARN_FRONTEND = ""
+
 # AWS credentials with read/write permission to the S3 bucket
 S3_AWS_ACCESS_KEY_ID = ""
 S3_AWS_SECRET_ACCESS_KEY = ""
