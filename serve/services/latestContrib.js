@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import logger from '../utils/logger.js'
 
-const bucket = 'mpc-main';
+const bucket = 'nightfall-mpc';
 
 export async function getLatestContribution({ circuit }) {
   const s3 = new AWS.S3();

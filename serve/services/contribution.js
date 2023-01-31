@@ -75,7 +75,7 @@ async function exportAndUploadVerificationKey(circuit, finalContributionData) {
 
 export async function isBeaconTheLatestContribution(circuit) {
   const s3 = new AWS.S3();
-  const bucket = 'mpc-main';
+  const bucket = 'nightfall-mpc';
   const list = await s3.listObjects({ Bucket: bucket, Prefix: `${circuit}` }).promise();
 
   const bucketData = list.Contents.filter(cont => cont.Key.match(`^${circuit}/.*\.zkey$`)).sort(

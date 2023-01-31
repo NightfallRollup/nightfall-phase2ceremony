@@ -21,5 +21,5 @@ do
 
   BASENAME=$(basename $f .circom)
   FOLDERNAME=${BASENAME%.*}
-  s3cmd sync circuits/${BASENAME}_0000.zkey s3://mpc-main/$FOLDERNAME/${BASENAME}_0000.zkey
+  s3cmd sync circuits/${BASENAME}_0000.zkey s3://nightfall-mpc/$FOLDERNAME/${BASENAME}_0000.zkey
 done

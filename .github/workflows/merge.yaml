@@ -80,7 +80,7 @@
 #            snarkjs groth16 setup ${f%.circom}.r1cs circuits/phase1.ptau ${f%.circom}_0000.zkey
 #            BASENAME=$(basename $f .circom)
 #            FOLDERNAME=${BASENAME%.*}
-#            s3cmd sync circuits/${BASENAME}_0000.zkey s3://mpc-main/$FOLDERNAME/${BASENAME}_0000.zkey
+#            s3cmd sync circuits/${BASENAME}_0000.zkey s3://nightfall-mpc/$FOLDERNAME/${BASENAME}_0000.zkey
 #          done
 #
 #  browser:
@@ -122,7 +122,7 @@
 #
 #      - name: Copy browser build
 #        run: |
-#          s3cmd sync --no-mime-magic --guess-mime-type build/* s3://mpc-main/website/
+#          s3cmd sync --no-mime-magic --guess-mime-type build/* s3://nightfall-mpc/website/
 #        working-directory: browser
 #
 #      - name: Get outputs

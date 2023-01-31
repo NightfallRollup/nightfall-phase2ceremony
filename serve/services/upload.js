@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import logger from '../utils/logger.js';
 
 export async function upload({ circuit, name, data, fileExtension = 'zkey'}) {
-  const bucketName = `mpc-main`;
+  const bucketName = `nightfall-mpc`;
   const keyValue = `${circuit}/${name}.${fileExtension}`;
 
   logger.info({
