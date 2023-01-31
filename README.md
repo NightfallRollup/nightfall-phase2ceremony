@@ -97,24 +97,23 @@ button;
 
 
 # Finishing contribution
-After finalizing the user's contribution, a beacon contribution is necessary which formalizes the ending of contributions. This is done by running the `beacon` application locally (See the `Running locally` section, Item 4.)
+After the user's contribution is finalized, a beacon contribution is necessary which formalizes the ending of contributions. This is done by running the `beacon` application locally (See the `Running locally` section, Item 4.)
 
 
 # How to deploy
-We make use of Terraform in order to manage the provisioning of AWS resources
-
-Set the organization in `terraform.tf` (`organization = ""`) - This is the name which was setup in https://app.terraform.io/
-
-- Install Terraform (https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
-- $ terraform login
-	-> After confirming with Yes, this will take you to https://app.terraform.io/ for creating a new token. Paste it on the terminal to that the process can continue
-- change the organization name in terraform.tf to point to your organization
-- $ terraform workspace new nightfall-mpc
-- $ terraform init
-- $ terraform validate - to veify if the TF resources looks good
-- $ terraform apply
-- $ terraform destroy
-
-Once these requirements are met, just clone this repo and add whatever circuits you need to run your
-ceremony for on the `circuits` folder. Then, assuming your AWS account has enough permissions (the
-CI/CD will tell you otherwise), you should be able to simply run `terraform deploy`.
+We make use of Terraform in order to manage the provisioning of AWS resources. Follow the instructions to deploy the application on AWS:
+1. Install Terraform - (Instructions [here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli))
+2. Open a terminal session, on the root of the project, change to the directory `terraform`
+3. Issue the command `terraform login`. After confirming with `Yes`, this will take you to [Terraform Cloud](https://app.terraform.io/) for creating a new token. Paste it on the terminal so that the process can continue
+4. Change the organization name in `terraform.tf` (`organization = "my org"`) to point to your organization (the one created in `Terraform Cloud`)
+5. Change the values of the variables in the file `terraform.tfvars` accordingly
+    - Before running the deployment, the `Route53` entries and `Certificates` (Amazon Certificate Manager) should be created beforehand because this cannot be automated when using an Amazon issued certificate since it requires a DNS or Email validation which should be requested manually.
+6. Run the following commands on a terminal session:
+    1. `terraform workspace new nightfall-mpc`
+    2. `terraform init`
+    3. `terraform validate`
+        - This will verify if the TF resources looks good
+    4. `terraform apply` 
+        - This will apply the resources on your AWS account. One can run `terraform plan` to see the changes that are going to be applied. If something went wrong and you want to rollback the changes, 
+        run `terraform destroy`;
+        - If for some reason the deployment failed somewhere, one can fix the issues and reply the apply command so that it will create/change only the non-existing resources.

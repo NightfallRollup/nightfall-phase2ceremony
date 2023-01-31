@@ -41,7 +41,7 @@ resource "aws_lb" "lb" {
   name               = "nightfall-mpc-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb.id]
+  security_groups    = [aws_security_group.nightfall-mpc.id]
   subnets            = aws_subnet.public[*].id
 
   enable_deletion_protection = false
@@ -80,7 +80,7 @@ resource "aws_lb_listener" "listener" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = ar.CERTIFICATE_ARN_BACKEND
+  certificate_arn   = var.CERTIFICATE_ARN_BACKEND
 
   default_action {
     type             = "forward"

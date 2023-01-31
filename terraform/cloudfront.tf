@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   default_root_object = "index.html"
   enabled             = true
   is_ipv6_enabled     = true
-  aliases = [ "ceremony.nightfall.io" ]
+  aliases = [ var.FRONTEND_DOMAIN ]
 
   default_cache_behavior {
     compress = false
@@ -35,7 +35,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate.nightfall-mpc-frontend.arn
+    acm_certificate_arn = var.CERTIFICATE_ARN_FRONTEND
     ssl_support_method = "sni-only"
   }
 

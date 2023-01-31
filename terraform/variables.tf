@@ -4,6 +4,8 @@ variable "AUTH_KEY" {}
 
 variable "BACKEND_HOST" {}
 
+variable "FRONTEND_DOMAIN" {}
+
 variable "S3_AWS_ACCESS_KEY_ID" {}
 variable "S3_AWS_SECRET_ACCESS_KEY" {}
 
@@ -11,6 +13,7 @@ variable "AWS_ACCESS_KEY_ID" {}
 variable "AWS_SECRET_ACCESS_KEY" {}
 
 variable "CERTIFICATE_ARN_BACKEND" {}
+
 variable "CERTIFICATE_ARN_FRONTEND" {}
 
 variable "availability_zone" {

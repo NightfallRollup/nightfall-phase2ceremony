@@ -42,7 +42,7 @@ resource "aws_security_group" "nightfall-mpc-backend" {
 
 resource "aws_instance" "nightfall-mpc" {
   count = length(var.public_subnets)
-  ami           = "ami-064736ff8301af3ee"
+  ami           = "ami-0ca5ef73451e16dc1"  # Amazon Linux 2 AMI (HVM) - Kernel 5.10, SSD Volume Type - 64-bit (x86)
   instance_type = "m6i.xlarge"
   user_data_base64 = base64encode("${templatefile("server.sh", {
       s3_access_key_secret = var.S3_AWS_SECRET_ACCESS_KEY
