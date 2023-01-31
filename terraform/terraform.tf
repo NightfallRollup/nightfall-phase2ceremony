@@ -1,9 +1,9 @@
 terraform {
   backend "remote" {
-    organization = "nightfall"
+    organization = "israelboudoux"
 
     workspaces {
-      prefix = "mpc-"
+      prefix = "nightfall-mpc"
     }
   }
 

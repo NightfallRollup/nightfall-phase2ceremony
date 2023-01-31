@@ -7,13 +7,13 @@ resource "aws_cloudfront_origin_access_control" "distribution" {
 }
 
 resource "aws_cloudfront_origin_access_identity" "distribution" {
-  comment = "Some comment"
+  comment = "nightfall-mpc"
 }
 
 resource "aws_cloudfront_distribution" "distribution" {
   origin {
-    domain_name              = aws_s3_bucket.server.bucket_regional_domain_name
-    origin_id                = aws_s3_bucket.server.bucket_regional_domain_name
+    domain_name              = aws_s3_bucket.nightfall-mpc.bucket_regional_domain_name
+    origin_id                = aws_s3_bucket.nightfall-mpc.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.distribution.id
     origin_path = "/website"
   }
@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   default_root_object = "index.html"
   enabled             = true
   is_ipv6_enabled     = true
-  aliases = "ceremony.nightfall.io"
+  aliases = [ "ceremony.nightfall.io" ]
 
   default_cache_behavior {
     compress = false
@@ -31,11 +31,11 @@ resource "aws_cloudfront_distribution" "distribution" {
     cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" // default policy id
     origin_request_policy_id = "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf" // default policy id
     response_headers_policy_id = "5cc3b908-e619-4b99-88e5-2cf7f45965bd" // default policy id
-    target_origin_id = aws_s3_bucket.server.bucket_regional_domain_name
+    target_origin_id = aws_s3_bucket.nightfall-mpc.bucket_regional_domain_name
   }
 
   viewer_certificate {
-    acm_certificate_arn = var.CERTIFICATE_ARN_FRONTEND
+    acm_certificate_arn = aws_acm_certificate.nightfall-mpc-frontend.arn
     ssl_support_method = "sni-only"
   }
 
@@ -44,17 +44,5 @@ resource "aws_cloudfront_distribution" "distribution" {
           locations = []
           restriction_type = "none"
       }
-  }
-}
-
-
-resource "aws_route53_record" "www" {
-  zone_id = var.ROUTE_53_ZONE_ID
-  name    = "ceremony.nightfall.io"
-  type    = "A"
-  alias {
-    name                   = aws_cloudfront_distribution.distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.distribution.hosted_zone_id
-    evaluate_target_health = false
   }
 }

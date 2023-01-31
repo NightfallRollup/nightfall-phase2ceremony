@@ -5,10 +5,10 @@ output "distribution_id" {
 
 output "frontend_address" {
   description = "The frontend address"
-  value       = aws_route53_record.www.name
+  value       = aws_route53_record.nightfall-mpc-frontend.name
 }
 
 output "backend_address" {
   description = "The backend address"
-  value       = aws_route53_record.api.name
+  value       = aws_route53_record.nightfall-mpc-api.name
 }

@@ -12,7 +12,6 @@
     "prod": "NODE_ENV=production node index.js",
     "test": "vitest run **/*.test.js --coverage",
     "test:watch": "vitest --watch **/*.test.js --coverage",
-    "ec2:create": "node ./aws/ec2_instance_create.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.215.0",
