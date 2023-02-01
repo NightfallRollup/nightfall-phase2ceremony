@@ -13,9 +13,14 @@ CERTIFICATE_ARN_BACKEND = "arn:aws:acm:eu-west-3:950711068211:certificate/d688c4
 # Certificate ARN for the frontend app - A certificate should be created on Amazon Certificate Manager (ACM) using the desired domain on region 'us-east-1' as required by Cloudfront
 CERTIFICATE_ARN_FRONTEND = "arn:aws:acm:us-east-1:950711068211:certificate/6dc01a09-9be1-438d-8d50-300edf33249f"
 
+# The R53 zone id to be used in Cloudfront
+ROUTE_53_ZONE_ID = "Z05413741GQORWY8FTPNF"
+
 # The domain the frontend application will respond. Should match with the domain set in the certificate for the frontend app (CERTIFICATE_ARN_FRONTEND)
 FRONTEND_DOMAIN = "ceremony.polygon-nightfall.io"
 
+# The domain the backend application will respond. Should match with the domain set in the certificate for the frontend app (CERTIFICATE_ARN_BACKEND)
+BACKEND_DOMAIN = "api-ceremony.polygon-nightfall.io"
 # The https address of the backend host. Should match with the domain set in the certificate for the frontend app (CERTIFICATE_ARN_BACKEND)
 BACKEND_HOST = "https://api-ceremony.polygon-nightfall.io"
 
