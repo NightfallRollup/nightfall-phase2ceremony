@@ -87,3 +87,15 @@ resource "aws_lb_listener" "listener" {
     target_group_arn = aws_lb_target_group.tg.arn
   }
 }
+
+resource "aws_route53_record" "api" {
+  zone_id = "Z05413741GQORWY8FTPNF"
+  name    = var.BACKEND_DOMAIN
+  type    = "A"
+
+  alias {
+    name = aws_lb.lb.dns_name
+    zone_id = aws_lb.lb.zone_id
+    evaluate_target_health = false
+  }
+}

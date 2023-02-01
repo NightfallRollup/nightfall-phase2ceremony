@@ -4,6 +4,8 @@ variable "AUTH_KEY" {}
 
 variable "BACKEND_HOST" {}
 
+variable "BACKEND_DOMAIN" {}
+
 variable "FRONTEND_DOMAIN" {}
 
 variable "S3_AWS_ACCESS_KEY_ID" {}
@@ -15,6 +17,8 @@ variable "AWS_SECRET_ACCESS_KEY" {}
 variable "CERTIFICATE_ARN_BACKEND" {}
 
 variable "CERTIFICATE_ARN_FRONTEND" {}
+
+variable "ROUTE_53_ZONE_ID" {}
 
 variable "availability_zone" {
   description = "a comma-separated list of availability zones, defaults to all AZ of the region, if set to something other than the defaults, both private_subnets and public_subnets have to be defined as well"
