@@ -118,11 +118,10 @@ We make use of Terraform in order to manage the provisioning of AWS resources. F
         - This will apply the resources on your AWS account. One can run `terraform plan` to see the changes that are going to be applied. If something went wrong and you want to rollback the changes, run `terraform destroy`;
         - If for some reason the deployment failed somewhere, one can fix the issues and reply the apply command so that it will create/change only the non-existing resources.
     5. Once finished this process, you will have to fix the records for the backend and frontend in R53 via AWS Console to point to the right values
-    6. This whole process needs to be repeated only if some infra stuff has changed!
+    6. This whole process rarely needs to be repeated. If some infra stuff has changed just run `terraform apply`.
 9. Build and deploy the Frontend app:
     1. On a terminal session, change to the directory `browser`
     2. Issue the command `BACKEND_HOST=[BACKEND_HOST_ADDRESS] ./build.sh`
     4. Upload the contents to S3: `s3cmd sync --no-mime-magic --guess-mime-type build/* s3://nightfall-mpc/website/`
     3. Invalidate Cloudfront cache. You need to get the Cloudfront ID (see on AWS console): `aws cloudfront create-invalidation --distribution-id [CLOUDFRONT_ID] --paths "/*";`
 10. On the terminal, run the command `./bin/upload-initial-zkeys.sh`. You will have to configure your AWS credentials (`$ aws configure`) before running it to guarantee they will be uploaded successfully
-11. 
