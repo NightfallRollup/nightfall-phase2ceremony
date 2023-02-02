@@ -123,5 +123,6 @@ We make use of Terraform in order to manage the provisioning of AWS resources. F
     1. On a terminal session, change to the directory `browser`
     2. Issue the command `BACKEND_HOST=[BACKEND_HOST_ADDRESS] ./build.sh`
     4. Upload the contents to S3: `s3cmd sync --no-mime-magic --guess-mime-type build/* s3://nightfall-mpc/website/`
-    3. Invalidate Cloudfront cache. You need to get the Cloudfront ID (see on AWS console): `aws cloudfront create-invalidation --distribution-id [CLOUDFRONT_ID] --paths "/*";`
+    3. Invalidate Cloudfront cache. You need to get the Cloudfront ID (see on AWS console): `aws cloudfront create-invalidation --distribution-id [CLOUDFRONT_ID] --paths "/*";`. You don't need to do this if it is the first time, this is only necessary when the Frontent app changes;
 10. On the terminal, run the command `./bin/upload-initial-zkeys.sh`. You will have to configure your AWS credentials (`$ aws configure`) before running it to guarantee they will be uploaded successfully
+11. The Backend app might take some time to go up. One can verify by hitting the `/healthcheck` endpoint.
