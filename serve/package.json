@@ -11,7 +11,7 @@
     "dev": "NODE_ENV=development nodemon index.js",
     "prod": "NODE_ENV=production node index.js",
     "test": "vitest run **/*.test.js --coverage",
-    "test:watch": "vitest --watch **/*.test.js --coverage",
+    "test:watch": "vitest --watch **/*.test.js --coverage"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.215.0",
