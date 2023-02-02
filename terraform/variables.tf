@@ -1,3 +1,5 @@
+variable "GIT_BRANCH" {}
+
 variable "REGION" {}
 
 variable "AUTH_KEY" {}

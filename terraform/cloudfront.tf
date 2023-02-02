@@ -46,14 +46,3 @@ resource "aws_cloudfront_distribution" "distribution" {
       }
   }
 }
-
-resource "aws_route53_record" "www" {
-  zone_id = var.ROUTE_53_ZONE_ID
-  name    = var.FRONTEND_DOMAIN
-  type    = "A"
-  alias {
-    name                   = aws_cloudfront_distribution.distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.distribution.hosted_zone_id
-    evaluate_target_health = false
-  }
-}

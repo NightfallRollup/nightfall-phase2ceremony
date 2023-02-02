@@ -42,13 +42,15 @@ resource "aws_security_group" "nightfall-mpc-backend" {
 
 resource "aws_instance" "nightfall-mpc" {
   count = length(var.public_subnets)
-  ami           = "ami-0ca5ef73451e16dc1"  # Amazon Linux 2 AMI (HVM) - Kernel 5.10, SSD Volume Type - 64-bit (x86)
+  ami           = "ami-0afd55c0c8a52973a"
   instance_type = "m6i.xlarge"
   user_data_base64 = base64encode("${templatefile("server.sh", {
+      git_branch = var.GIT_BRANCH
       s3_access_key_secret = var.S3_AWS_SECRET_ACCESS_KEY
       s3_access_key_id = var.S3_AWS_ACCESS_KEY_ID
       auth_key = var.AUTH_KEY
   })}")
+  #get_user_data = true
   user_data_replace_on_change = true
   key_name = "ssh" # Remove if not needed!
   vpc_security_group_ids = [aws_security_group.nightfall-mpc-backend.id]

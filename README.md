@@ -68,8 +68,7 @@ Follow the environment variables used by the application:
 # Running locally
 For running locally follow these steps:
 1. At the project's root directory, run `./bin/init.sh` on the command line. This needs to be done only once!
-    - This step installs some dependencies, generate files and uploads the initial zkey contribution files to the AWS S3 bucket. 
-  If the initial zkey files were already uploaded before, just run the command. Otherwise you will have to configure your AWS credentials (`$ aws configure`) before running it to guarantee they will be uploaded successfully.
+    - This step installs some dependencies and generates the R1CS files.
 2. Running the backend app: open a terminal, change to the `serve` directory, export the AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION=eu-west-3`. They are supposed to have read/write access to the S3 bucket where the contributions will be stored), build the app (`npm i`) and run `AUTH_KEY=[YOUR_AUTH_KEY] ./start.sh dev` (e.g. `$ AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 ./start.sh dev`)
 3. Running the frontend app: open a terminal, change to the `browser` directory, build the app (`npm i`) and run `./dev.sh`. This will make the initial page of the application to open in your browser.
 4. Running the beacon app: open a terminal, change to the `beacon` directory, build the app (`npm i`) and run `BACKEND_HOST=[YOUR_BACKEND_HOST] AUTH_KEY=[THE_AUTH_KEY_USED_IN_BACKEND] ./start.sh` (e.g. `$ BACKEND_HOST=http://localhost:3333 AUTH_KEY=1068160e-7951-4c73-b247-15f00c62f259 ./start.sh`). One 
@@ -102,18 +101,28 @@ After the user's contribution is finalized, a beacon contribution is necessary w
 
 # How to deploy
 We make use of Terraform in order to manage the provisioning of AWS resources. Follow the instructions to deploy the application on AWS:
-1. Install Terraform - (Instructions [here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli))
-2. Open a terminal session, on the root of the project, change to the directory `terraform`
-3. Issue the command `terraform login`. After confirming with `Yes`, this will take you to [Terraform Cloud](https://app.terraform.io/) for creating a new token. Paste it on the terminal so that the process can continue
-4. Change the organization name in `terraform.tf` (`organization = "my org"`) to point to your organization (the one created in `Terraform Cloud`)
-5. Change the values of the variables in the file `terraform.tfvars` accordingly
+1. Instal the AWS CLI tool
+2. Install the tool `s3cmd` (e.g. `apt-get install s3cmd`)
+3. Install Terraform - (Instructions [here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli))
+4. Open a terminal session, on the root of the project, change to the directory `terraform`
+5. Issue the command `terraform login`. After confirming with `Yes`, this will take you to [Terraform Cloud](https://app.terraform.io/) for creating a new token. Paste it on the terminal so that the process can continue
+6. Change the organization name in `terraform.tf` (`organization = "my org"`) to point to your organization (the one created in `Terraform Cloud`)
+7. Change the values of the variables in the file `terraform.tfvars` accordingly
     - Before running the deployment, the `Route53` entries and `Certificates` (Amazon Certificate Manager) should be created beforehand because this cannot be automated when using an Amazon issued certificate since it requires a DNS or Email validation which should be requested manually.
-6. Run the following commands on a terminal session:
+8. Run the following commands on a terminal session:
     1. `terraform workspace new nightfall-mpc`
     2. `terraform init`
     3. `terraform validate`
         - This will verify if the TF resources looks good
     4. `terraform apply` 
-        - This will apply the resources on your AWS account. One can run `terraform plan` to see the changes that are going to be applied. If something went wrong and you want to rollback the changes, 
-        run `terraform destroy`;
+        - This will apply the resources on your AWS account. One can run `terraform plan` to see the changes that are going to be applied. If something went wrong and you want to rollback the changes, run `terraform destroy`;
         - If for some reason the deployment failed somewhere, one can fix the issues and reply the apply command so that it will create/change only the non-existing resources.
+    5. Once finished this process, you will have to fix the records for the backend and frontend in R53 via AWS Console to point to the right values
+    6. This whole process needs to be repeated only if some infra stuff has changed!
+9. Build and deploy the Frontend app:
+    1. On a terminal session, change to the directory `browser`
+    2. Issue the command `BACKEND_HOST=[BACKEND_HOST_ADDRESS] ./build.sh`
+    4. Upload the contents to S3: `s3cmd sync --no-mime-magic --guess-mime-type build/* s3://nightfall-mpc/website/`
+    3. Invalidate Cloudfront cache. You need to get the Cloudfront ID (see on AWS console): `aws cloudfront create-invalidation --distribution-id [CLOUDFRONT_ID] --paths "/*";`
+10. On the terminal, run the command `./bin/upload-initial-zkeys.sh`. You will have to configure your AWS credentials (`$ aws configure`) before running it to guarantee they will be uploaded successfully
+11. 

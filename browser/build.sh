@@ -1,7 +1,7 @@
 #! /bin/bash
 
 if [ -z "${BACKEND_HOST}" ]; then
-    echo "Please, set the `BACKEND_HOST` environment variable!"
+    echo "Please, set the BACKEND_HOST environment variable!"
     exit 1
 fi
 

@@ -11,9 +11,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 ## Cloning Nightfall repo and installing the NPM version used
-git clone https://github.com/NightfallRollup/nightfall-phase2ceremony.git
+git clone -b ${git_branch} https://github.com/NightfallRollup/nightfall-phase2ceremony.git
 
-cd phase2ceremony
+cd nightfall-phase2ceremony
 
 # Installing circom dependencies
 apt-get update
