@@ -31,17 +31,21 @@ program
     console.log('Applying hash: ', beaconHash);
     console.log('Contributing to circuits: ', circuits);
 
-    const res = await axios({
-      method: 'GET',
-      url: `${BACKEND_HOST}/token`,
-    });
+    let token = process.env.TOKEN;
+    if (! token) {
+      const res = await axios({
+        method: 'GET',
+        url: `${BACKEND_HOST}/token`,
+        timeout: 300000
+      });
 
-    if (! res.data.token) {
-      console.error(`Sorry, it is not possible to contribute at the moment. Please, try again later!`);
-      return;
+      if (! res.data.token) {
+        console.error(`Sorry, it is not possible to contribute at the moment. Please, try again later!`);
+        return;
+      }
+
+      token = res.data.token;
     }
-
-    const token = res.data.token;
 
     for (const circuit of circuits) {
       console.log('\n*** Generating contribution for circuit: ', circuit);

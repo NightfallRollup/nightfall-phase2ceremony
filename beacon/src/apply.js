@@ -13,6 +13,7 @@ module.exports = async function applyContribution({ circuit, contribData, token,
     method: 'get',
     url: `${backendHost}/contribution/${circuit}?token=${token}`,
     responseType: 'arraybuffer',
+    timeout: 300000
   });
 
   fs.writeFileSync(`contrib_${circuit}.zkey`, response.data, { encoding: 'binary' });
@@ -44,6 +45,7 @@ module.exports = async function applyContribution({ circuit, contribData, token,
     url: `${backendHost}/beacon`,
     data: formData,
     headers: { 'x-app-token': process.env.AUTH_KEY },
+    timeout: 300000
   });
 
   console.log(chalk.green(`Applied beacon to circuit ${circuit}`));

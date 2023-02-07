@@ -53,11 +53,11 @@ resource "aws_lb" "lb" {
 }
 
 resource "aws_lb_target_group" "tg" {
-  name     = "nightfall-mpc-lb-tg"
-  port     = 3333
-  protocol = "HTTP"
+  name             = "nightfall-mpc-lb-tg"
+  port             = 3333
+  protocol         = "HTTP"
   protocol_version = "HTTP1"
-  vpc_id   = aws_vpc.nightfall-mpc.id
+  vpc_id           = aws_vpc.nightfall-mpc.id
 
   health_check {
     path = "/healthcheck"
@@ -69,7 +69,7 @@ resource "aws_lb_target_group" "tg" {
 }
 
 resource "aws_lb_target_group_attachment" "tg-attachment" {
-  count = length(var.public_subnets)
+  count            = length(aws_instance.nightfall-mpc)
   target_group_arn = aws_lb_target_group.tg.arn
   target_id        = aws_instance.nightfall-mpc[count.index].id
   port             = 3333

@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   try {
     newToken = await issueNewToken(req.app);
   } catch (err) {
-    logger.error(err.message);
+    logger.error(err);
     return res.status(503).send(err.message);
   }
 

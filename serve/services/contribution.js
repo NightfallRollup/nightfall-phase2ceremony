@@ -18,7 +18,7 @@ export async function applyUserContribution(req, token, circuit, name, data) {
 
 async function applyContribution(req, token, circuit, data, name, isBeacon) {
 
-  if(! isTokenValid(token, req.app)) {
+  if(! await isTokenValid(token, req.app)) {
     throw new Error(`Invalid token: ${token}`);
   }
 

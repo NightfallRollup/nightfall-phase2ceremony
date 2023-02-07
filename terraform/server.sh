@@ -42,5 +42,7 @@ wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_16.ptau -
 cd serve
 npm i
 
+echo "Memcached address: ${memcached_cluster_address}"
+
 ## Starting app like a boss
-AUTH_KEY=${auth_key} ./start.sh prod
+AUTH_KEY=${auth_key} MEMCACHIER_SERVERS="${memcached_cluster_address}:11211" ./start.sh prod

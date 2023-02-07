@@ -15,7 +15,7 @@ router.get('/:circuit', async (req, res, next) => {
     const { circuit } = req.params;
     const { token } = req.query;
 
-    if(! isTokenValid(token, req.app)) {
+    if(! await isTokenValid(token, req.app)) {
       logger.warn(`Invalid token: ${token}`);
       res.status(400).send('Sorry, your contribution session expired or the token is not valid. Please, try again later!');
       return;

@@ -53,6 +53,7 @@ The following resources are needed for supporting the application on AWS:
 - A Cloudfront distribution is also provisioned
 - A S3 bucket: it is used for storing the contributions. It is private and the application needs access to credentials with read/write permissions.
 - A CloudWatch log group
+- A Elastic Cluster Memcached instance
 
 
 # Environment variables
