@@ -1,6 +1,7 @@
 
 resource "aws_security_group" "nightfall-mpc" {
   vpc_id = aws_vpc.nightfall-mpc.id
+  name   = "nightfall-mpc-sg"
   egress = [
     {
       cidr_blocks      = [ "0.0.0.0/0", ]
@@ -43,7 +44,7 @@ resource "aws_lb" "lb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.nightfall-mpc.id]
   subnets            = aws_subnet.public[*].id
-
+  idle_timeout       = 600
   enable_deletion_protection = false
 
   tags = {

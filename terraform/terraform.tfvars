@@ -6,10 +6,10 @@ REGION = "eu-west-3"
 
 # The availability zones one wish to deply the applications - this application should be deployed just in one availability zone, because of the token control
 # that only lives in the server it started, otherwise things will not work accordingly
-availability_zone = [ "eu-west-3a" ]
+availability_zone = [ "eu-west-3a", "eu-west-3b" ]
 
 # Sets the authentication key. This can be any string
-AUTH_KEY = "1068160e-7951-4c73-b247-15f00c62f259"
+AUTH_KEY = ""
 
 # Certificate ARN for the backend app - A certificate should be created on Amazon Certificate Manager (ACM) using the desired domain
 CERTIFICATE_ARN_BACKEND = ""

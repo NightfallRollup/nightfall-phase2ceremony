@@ -33,9 +33,11 @@ async function generateContribution({ circuit, name, contribData, token, backend
       method: 'POST',
       url: `${url}`,
       data: formData,
+      timeout: 300000
     });
     return true;
   } catch (error) {
+    console.log(error);
     return false;
   }
 }

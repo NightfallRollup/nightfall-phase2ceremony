@@ -1,6 +1,7 @@
 
 resource "aws_security_group" "nightfall-mpc-backend" {
   vpc_id = aws_vpc.nightfall-mpc.id
+  name   = "nightfall-mpc-sg-backend"
   egress = [
     {
       cidr_blocks      = [ "0.0.0.0/0", ]
