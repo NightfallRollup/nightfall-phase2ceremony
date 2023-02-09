@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './App.module.css';
 import { ContributeCard } from './components/contributeCard';
 import { ENTROPY_ARRAY_MAX_SIZE } from './constants';
+import { buf2hex } from './utils';
 
 const entropyArr = [];
 
@@ -60,7 +61,7 @@ function App() {
     } else if (!entropy) {
       const stream = new TextEncoder().encode(entropyArr.reduce((acc, current) => acc + current));
       crypto.subtle.digest('SHA-256', stream).then(hash => {
-        setEntropy(new TextDecoder().decode(hash));
+        setEntropy(buf2hex(hash));
       });
     }
   }, [mousePos, doneCapturing, entropy, isMobile]);
@@ -93,7 +94,10 @@ function App() {
           to generate some entropy. If you want, you can also enter your name for later verification.
         </p>
       <div style={{display: token == '' ? 'none' : 'inline'}}>
-        <p>The process might takes 10-20mins. Go grab a coffee!</p>
+        <p>The process might take 10-20mins. Go grab a coffee!</p>
+        <div style={{display: entropy == 0 ? 'none' : 'inline'}}>
+          Entropy: {entropy}
+        </div>
         <ContributeCard
           setEntropy={setEntropy}
           entropy={entropy}

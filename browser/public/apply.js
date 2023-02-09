@@ -15,8 +15,7 @@ async function generateContribution({ circuit, name, contribData, token, backend
   };
 
   // generates the contribution for the circuit
-  const res = await zKey.contribute(`${url}/${circuit}?token=${token}`, o, name, contribData);
-  if (!res) throw Error('Invalid inputs');
+  const contributionHash = await zKey.contribute(`${url}/${circuit}?token=${token}`, o, name, contribData, console);
 
   o.file = o.data.buffer.slice(o.data.byteOffset, o.data.byteLength + o.data.byteOffset);
 
@@ -35,10 +34,10 @@ async function generateContribution({ circuit, name, contribData, token, backend
       data: formData,
       timeout: 300000
     });
-    return true;
+    return contributionHash;
   } catch (error) {
     console.log(error);
-    return false;
+    return null;
   }
 }
 

@@ -6,13 +6,24 @@ import { styled } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress';
 import CheckIcon from '@mui/icons-material/Check';
 import BlockIcon from '@mui/icons-material/Block';
+import { buf2hex } from '../utils';
 
 const StyledList = styled(List)(({ theme }) => ({
   flex: '1 0 100%',
   margin: '2% auto',
 }));
 
-export default function SubmissionProgress({ circuits, circuitsSubmitted, circuitsFailed }) {
+function getCircuitDescription(circuit, circuitContributionHash) {
+  let contributionHash = null;
+
+  circuitContributionHash.forEach(e => e.circuit === circuit ? contributionHash = e.contributionHash : null);
+
+  if(! contributionHash) return circuit;
+
+  return `${circuit} (Contribution hash: ${buf2hex(contributionHash)})`;
+}
+
+export default function SubmissionProgress({ circuits, circuitsSubmitted, circuitsFailed, circuitContributionHash }) {
   return (
     <StyledList>
       {circuits.map(circuit => {
@@ -28,7 +39,7 @@ export default function SubmissionProgress({ circuits, circuitsSubmitted, circui
                     : (<BlockIcon />)
               }
             </ListItemIcon>
-            <ListItemText primary={circuit} />
+            <ListItemText primary={getCircuitDescription(circuit, circuitContributionHash)} />
           </ListItem>
         );
       })}

@@ -11,6 +11,7 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
   const [circuitsSubmitted, setCircuitsSubmitted] = React.useState([]);
   const [entropyOverride, setEntropyOverride] = React.useState(false);
   const [circuitsFailed, setCircuitsFailed] = React.useState([]);
+  const [circuitContributionHash, setCircuitContributionHash] = React.useState([]);
 
   const haikunator = new Haikunator({
     defaults: {
@@ -33,7 +34,7 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
 
     for (const circuit of circuits) {
       try {
-        const status = await window.generateContrib({
+        const contributionHash = await window.generateContrib({
           circuit,
           type: 'contribution',
           name,
@@ -42,8 +43,9 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
           backendServer: backendServer
         });
 
-        if (status) {
+        if (contributionHash) {
           setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
+          setCircuitContributionHash(circuitContributionHash => [...circuitContributionHash, { circuit: circuit, contributionHash: contributionHash}]);
         } else {
           setCircuitsFailed(circuitsFailed => [...circuitsFailed, circuit]);
         }
@@ -74,7 +76,7 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
           setName={setName}
         />
       ) : (
-        <SubmissionProgress circuits={circuits} circuitsSubmitted={circuitsSubmitted} circuitsFailed={circuitsFailed} />
+        <SubmissionProgress circuits={circuits} circuitsSubmitted={circuitsSubmitted} circuitsFailed={circuitsFailed} circuitContributionHash={circuitContributionHash} />
       )}
       <ThankYou
         circuits={circuits}
