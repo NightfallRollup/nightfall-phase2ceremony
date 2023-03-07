@@ -4,9 +4,10 @@
 node_modules
 log
 out
-circuits/*
 !circuits/common
 !circuits/*.circom
+circuits/*.ptau
+circuits/*.r1cs
 *.zkey
 *.pem
 .terraform*

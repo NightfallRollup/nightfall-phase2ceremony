@@ -5,13 +5,13 @@ import Buttons from './cardButtons';
 import SubmissionProgress from './submissionProgress';
 import ThankYou from './thankYou';
 
-export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile }) {
+export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMobile, token, backendServer }) {
   let [name, setName] = React.useState();
   const [submitted, setSubmitted] = React.useState(false);
   const [circuitsSubmitted, setCircuitsSubmitted] = React.useState([]);
   const [entropyOverride, setEntropyOverride] = React.useState(false);
-
-  const [verifications, setVerifications] = React.useState();
+  const [circuitsFailed, setCircuitsFailed] = React.useState([]);
+  const [circuitContributionHash, setCircuitContributionHash] = React.useState([]);
 
   const haikunator = new Haikunator({
     defaults: {
@@ -30,21 +30,29 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
       [circuits[i], circuits[j]] = [circuits[j], circuits[i]];
     }
 
-    const vers = {};
+    if (!name) name = haikunator.haikunate();
+
     for (const circuit of circuits) {
-      if (!name) name = haikunator.haikunate();
-      const verification = await window.applyContrib({
-        circuit,
-        type: 'contribution',
-        name,
-        contribData: entropy,
-        branch: process.env.REACT_APP_BRANCH || 'main',
-        NODE_ENV: process.env.NODE_ENV,
-      });
-      vers[circuit] = verification;
-      setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
+      try {
+        const contributionHash = await window.generateContrib({
+          circuit,
+          type: 'contribution',
+          name,
+          contribData: entropy,
+          token: token,
+          backendServer: backendServer
+        });
+
+        if (contributionHash) {
+          setCircuitsSubmitted(circuitsSubmitted => [...circuitsSubmitted, circuit]);
+          setCircuitContributionHash(circuitContributionHash => [...circuitContributionHash, { circuit: circuit, contributionHash: contributionHash}]);
+        } else {
+          setCircuitsFailed(circuitsFailed => [...circuitsFailed, circuit]);
+        }
+      } catch (err) {
+        setCircuitsFailed(circuitsFailed => [...circuitsFailed, circuit]);
+      }
     }
-    setVerifications(vers);
     console.log('END: ', new Date());
   }
 
@@ -68,12 +76,12 @@ export function ContributeCard({ setEntropy, entropy, entropyArr, circuits, isMo
           setName={setName}
         />
       ) : (
-        <SubmissionProgress circuits={circuits} circuitsSubmitted={circuitsSubmitted} />
+        <SubmissionProgress circuits={circuits} circuitsSubmitted={circuitsSubmitted} circuitsFailed={circuitsFailed} circuitContributionHash={circuitContributionHash} />
       )}
       <ThankYou
         circuits={circuits}
         circuitsSubmitted={circuitsSubmitted}
-        verifications={verifications}
+        circuitsFailed={circuitsFailed}
       />
     </div>
   );

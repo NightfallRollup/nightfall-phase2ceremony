@@ -30,8 +30,8 @@
   "scripts": {
     "dev": "sh dev.sh",
     "build": "sh build.sh",
-    "react-dev": "react-scripts start",
-    "react-build": "react-scripts build",
+    "react-dev": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
+    "react-build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

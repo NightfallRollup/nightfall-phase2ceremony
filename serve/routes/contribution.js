@@ -1,38 +1,64 @@
 import express from 'express';
-import { hasFile, routeValidator, validateContribution } from '../services/validations.js';
+import { hasFile, routeValidator } from '../services/validations.js';
 import { uploadContribSchema } from '../schemas/upload.js';
-import { upload } from '../services/upload.js';
 import { getLatestContribution } from '../services/latestContrib.js';
+import { applyUserContribution } from '../services/contribution.js';
+import logger from '../utils/logger.js';
+import { isTokenValid, resetTokenIfContributionIsDone } from '../utils/tokenContributionUtil.js';
+import { CIRCUITS  } from '../utils/constants.js';
 
 const router = express.Router();
 
 router.get('/:circuit', async (req, res, next) => {
   try {
+    // Validate the circuit value
     const { circuit } = req.params;
+    const { token } = req.query;
+
+    if(! await isTokenValid(token, req.app)) {
+      logger.warn(`Invalid token: ${token}`);
+      res.status(400).send('Sorry, your contribution session expired or the token is not valid. Please, try again later!');
+      return;
+    }
+
+    if (! CIRCUITS.includes(circuit)) {
+      res.status(400).send('Invalid circuit!');
+      return;
+    }
+
     const contrib = await getLatestContribution({ circuit });
-    return res.status(200).send(contrib.Body);
+    if(! contrib) {
+      res.sendStatus(404);
+    } else {
+      res.status(200).send(contrib.Body);
+    }
   } catch (err) {
     next(err);
   }
 });
 
-router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, res) => {
+router.post('/', routeValidator.body(uploadContribSchema), hasFile, async (req, res, next) => {
   try {
-    const { name, circuit } = req.body;
+    // Validate the circuit value
+    const { name, circuit, token } = req.body;
     const { data } = req.files.contribution;
 
-    //send response immediately so the user can start working on the next circuit
+    try {
+      await applyUserContribution(req, token, circuit, name, data);
+    } catch (error) {
+      logger.warn(error.message);      
+      res.status(400);
+      return;
+    }
+
+    resetTokenIfContributionIsDone(req.app);
+
     res.send({
       status: true,
-      message: 'Thank you for your contribution!',
       verification: res.locals,
     });
-
-    // THEN verify it before uploading. The verification logs are unused for now :(
-    const vl = await validateContribution({ circuit, contribData: data });
-    // Upload it
-    await upload({ circuit, name, data: data });
   } catch (err) {
+    logger.error(err);
     next(err);
   }
 });

@@ -3,28 +3,31 @@ import {
   beaconAuth,
   hasFile,
   routeValidator,
-  validateContribution,
 } from '../services/validations.js';
+import { applyBeaconContribution } from '../services/contribution.js';
 import { uploadBeaconSchema } from '../schemas/upload.js';
-import { upload } from '../services/upload.js';
+import logger from '../utils/logger.js';
 
 const router = express.Router();
 
 router.post('/', beaconAuth, routeValidator.body(uploadBeaconSchema), hasFile, async (req, res) => {
-  const { circuit } = req.body;
+  const { circuit, token } = req.body;
   const { data } = req.files.contribution;
 
-  //send response immediately so the user can start working on the next circuit
+  logger.info({ msg: 'Initiating beacon contribution', circuit });
+
+  try {
+    await applyBeaconContribution(req, token, circuit, data);
+  } catch (error) {
+    logger.warn(error.message);      
+    res.status(400);
+    return;
+  }
+
   res.send({
     status: true,
-    message: 'Thank you for your contribution!',
     verification: res.locals,
   });
-
-  // THEN verify it before uploading. The verification logs are unused for now :(
-  const vl = await validateContribution({ circuit, contribData: data });
-  // Upload it
-  await upload({ circuit, data: data, beacon: true });
 });
 
 export default router;

@@ -1,16 +1,16 @@
 terraform {
   backend "remote" {
-    organization = "polygon-nightfall"
+    organization = "my org here"
 
     workspaces {
-      prefix = "mpc-"
+      prefix = "nightfall-mpc"
     }
   }
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "~> 4.52.0"
     }
   }
 

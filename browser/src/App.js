@@ -1,37 +1,67 @@
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import styles from './App.module.css';
 import { ContributeCard } from './components/contributeCard';
-import { useEffect, useState } from 'react';
 import { ENTROPY_ARRAY_MAX_SIZE } from './constants';
+import { buf2hex } from './utils';
 
 const entropyArr = [];
 
 const CIRCUITS = process.env.REACT_APP_CIRCUITS.split(',').map(e => e.trim());
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST;
 
 function App() {
   const [mousePos, setMousePos] = useState({});
   const [doneCapturing, setDoneCapturing] = useState(false);
   const [entropy, setEntropy] = useState(0);
   const isMobile = window.innerWidth < 1024;
+  const [token, setToken] = useState('');
+  const [isButtonEnabled, enableButton] = useState(true);
 
+  async function getToken() {
+    try {
+      const res = await axios.get(`${BACKEND_HOST}/token`);
+      if(res.data.token) 
+        setToken(res.data.token);
+      else
+        alert('Sorry, someone is contributing at the moment. Please, try some minutes later. Thank you!');
+    } catch (err) {
+      if(err.response) {
+        enableButton(false);
+        alert(err.response.data);
+      } else
+        alert(err.message);
+    }
+  }
+
+  // captures mouse events to generate the entropy
   useEffect(() => {
+    if (! token) return;
+
     const handleMouseMove = event => {
       setMousePos({ x: event.clientX, y: event.clientY });
     };
+
     window.addEventListener('mousemove', handleMouseMove);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
-
+  }, [token]);
+ 
+  // sets the entropy once the generation is done
   useEffect(() => {
     if (!mousePos.x || entropy || isMobile) return;
+
     if (!doneCapturing) {
       entropyArr.push(Math.round(mousePos.x * mousePos.y));
+
       if (entropyArr.length >= ENTROPY_ARRAY_MAX_SIZE) setDoneCapturing(true);
+
     } else if (!entropy) {
       const stream = new TextEncoder().encode(entropyArr.reduce((acc, current) => acc + current));
       crypto.subtle.digest('SHA-256', stream).then(hash => {
-        setEntropy(new TextDecoder().decode(hash));
+        setEntropy(buf2hex(hash));
       });
     }
   }, [mousePos, doneCapturing, entropy, isMobile]);
@@ -58,19 +88,31 @@ function App() {
         Nightfall Phase2 Ceremony
       </div>
       <p>
-        Zero-knowledge proofs require a trusted setup. Since Nightfall uses the Groth16 proving
-        scheme, a second phase of the MPC is needed, for each circuit. We want to invite you to
-        contribute to this Second Phase. To start, just move your {isMobile ? 'device' : 'cursor'}{' '}
-        to generate some entropy. If you want, you can also enter your name for later verification.
-      </p>
-      <p>The process takes 10-20mins. Go grab a coffee!</p>
-      <ContributeCard
-        setEntropy={setEntropy}
-        entropy={entropy}
-        entropyArr={entropyArr}
-        circuits={CIRCUITS}
-        isMobile={isMobile}
-      />
+          Zero-knowledge proofs require a trusted setup. Since Nightfall uses the Groth16 proving
+          scheme, a second phase of the MPC is needed, for each circuit. We want to invite you to
+          contribute to this Second Phase. To start, just move your {isMobile ? 'device' : 'cursor'}{' '}
+          to generate some entropy. If you want, you can also enter your name for later verification.
+        </p>
+      <div style={{display: token == '' ? 'none' : 'inline'}}>
+        <p>The process might take 10-20mins. Go grab a coffee!</p>
+        <div style={{display: entropy == 0 ? 'none' : 'inline'}}>
+          Entropy: {entropy}
+        </div>
+        <ContributeCard
+          setEntropy={setEntropy}
+          entropy={entropy}
+          entropyArr={entropyArr}
+          circuits={CIRCUITS}
+          isMobile={isMobile}
+          token={token}
+          backendServer={BACKEND_HOST}
+        />
+      </div>
+      <div className="buttons" style={{display: !token ? 'inline' : 'none'}}>
+        <button onClick={getToken} style={{display: isButtonEnabled ? 'inline' : 'none'}}>
+          Let's do it!
+        </button>
+      </div>
     </div>
   );
 }

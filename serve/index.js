@@ -1,8 +1,8 @@
-// require('dotenv').config();
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
+import tokenContributionIssuer from './routes/tokenContributionIssuer.js';
 import contribution from './routes/contribution.js';
 import beacon from './routes/beacon.js';
 import cors from 'cors';
@@ -14,7 +14,12 @@ app.use(
     createParentPath: true,
   }),
 );
-app.use(morgan('dev'));
+
+if(process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan('short'));
+}
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -22,6 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
 
+app.use('/token', tokenContributionIssuer);
 app.use('/contribution', contribution);
 app.use('/beacon', beacon);
 app.get('/healthcheck', (req, res) => {

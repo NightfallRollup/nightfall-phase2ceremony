@@ -1,10 +1,10 @@
 
-resource "aws_s3_bucket" "server" {
-  bucket = "mpc-${var.BRANCH}"
-  force_destroy = var.BRANCH == "main" ? false : true
+resource "aws_s3_bucket" "nightfall-mpc" {
+  bucket = "nightfall-mpc"
+  force_destroy = false
 }
 
-data "aws_iam_policy_document" "server_policy" {
+data "aws_iam_policy_document" "nightfall-mp-server_policy" {
   statement {
     principals {
       type = "Service"
@@ -14,8 +14,8 @@ data "aws_iam_policy_document" "server_policy" {
       "s3:GetObject",
     ]
     resources = [
-      aws_s3_bucket.server.arn,
-      "${aws_s3_bucket.server.arn}/*",
+      aws_s3_bucket.nightfall-mpc.arn,
+      "${aws_s3_bucket.nightfall-mpc.arn}/*",
     ]
     condition {
       test = "StringLike"
@@ -29,12 +29,12 @@ data "aws_iam_policy_document" "server_policy" {
 }
 
 resource "aws_s3_bucket_policy" "server_policy" {
-  bucket = aws_s3_bucket.server.id
-  policy = data.aws_iam_policy_document.server_policy.json
+  bucket = aws_s3_bucket.nightfall-mpc.id
+  policy = data.aws_iam_policy_document.nightfall-mp-server_policy.json
 }
 
 resource "aws_s3_bucket_cors_configuration" "server" {
-  bucket = aws_s3_bucket.server.id
+  bucket = aws_s3_bucket.nightfall-mpc.id
 
   cors_rule {
     allowed_headers = ["*"]

@@ -1,18 +1,20 @@
 #!/bin/bash
 export HOME=/home/ubuntu
-export AWS_ACCESS_KEY_ID=${access_key_id}
-export AWS_SECRET_ACCESS_KEY=${access_key_secret}
+
+export AWS_ACCESS_KEY_ID=${s3_access_key_id}
+export AWS_SECRET_ACCESS_KEY=${s3_access_key_secret}
 
 ## Installing nvm
-curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 ## Cloning Nightfall repo and installing the NPM version used
-git clone -b ${git_branch} https://github.com/NightfallRollup/phase2ceremony.git
-echo "Commit hash ${commit_hash}"
+git clone -b ${git_branch} https://github.com/NightfallRollup/nightfall-phase2ceremony.git
 
-cd phase2ceremony
+cd nightfall-phase2ceremony
+
 # Installing circom dependencies
 apt-get update
 apt install build-essential cargo -y
@@ -40,5 +42,7 @@ wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_16.ptau -
 cd serve
 npm i
 
+echo "Memcached address: ${memcached_cluster_address}"
+
 ## Starting app like a boss
-AUTH_KEY=${auth_key} npm run start
+AUTH_KEY=${auth_key} MEMCACHIER_SERVERS="${memcached_cluster_address}:11211" ./start.sh prod

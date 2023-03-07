@@ -2,15 +2,11 @@ const { zKey } = require('snarkjs');
 const axios = require('axios').default;
 const FormData = require('form-data');
 
-async function applyContrib({ circuit, name, contribData, branch, NODE_ENV }) {
-  let url;
-  if (NODE_ENV === 'development') {
-    url = 'http://localhost:3333/contribution';
-  } else if (branch !== 'main') {
-    url = `https://api-${branch}.ceremony.polygon-nightfall.io/contribution`;
-  } else {
-    url = 'https://api-ceremony.polygon-nightfall.io/contribution';
-  }
+/**
+ * Generates the contribution for a given circuit and submits it
+ */
+async function generateContribution({ circuit, name, contribData, token, backendServer }) {
+  const url = `${backendServer}/contribution`;
 
   const o = {
     type: 'mem',
@@ -18,23 +14,31 @@ async function applyContrib({ circuit, name, contribData, branch, NODE_ENV }) {
     fileName: `contribution_${circuit}.zkey`,
   };
 
-  const res = await zKey.contribute(`${url}/${circuit}`, o, name, contribData);
+  // generates the contribution for the circuit
+  const contributionHash = await zKey.contribute(`${url}/${circuit}?token=${token}`, o, name, contribData, console);
+
   o.file = o.data.buffer.slice(o.data.byteOffset, o.data.byteLength + o.data.byteOffset);
 
-  if (!res) throw Error('Invalid inputs');
-
   const formData = new FormData();
+
   formData.append('contribution', new Blob([o.file]));
   formData.append('name', name);
   formData.append('circuit', circuit);
+  formData.append('token', token);
 
-  const call = await axios({
-    method: 'POST',
-    url: `${url}`,
-    data: formData,
-  });
-
-  return call.data.verification;
+  try {
+    // submits the contribution
+    await axios({
+      method: 'POST',
+      url: `${url}`,
+      data: formData,
+      timeout: 300000
+    });
+    return contributionHash;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }
 
-window.applyContrib = applyContrib;
+window.generateContrib = generateContribution;
